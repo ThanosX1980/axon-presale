@@ -226,11 +226,6 @@
     color:var(--text-dimmer);font-size:12.5px;
   }
   footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
-
-  .placeholder-flag{
-    display:inline-block;background:rgba(255,61,113,.12);color:var(--pulse);
-    font-size:10.5px;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
-  }
 </style>
 </head>
 <body>
@@ -386,9 +381,6 @@
 <script>
   const CONFIG = {
     tokenPriceUsd: 0.001875,
-    raisedUsd: 142850,
-    tokensSold: Math.round(142850 / 0.001875),
-    softBarDenominatorUsd: 1500000,
     rates: {
       btc: 62000,
       eth: 3400,
@@ -399,31 +391,6 @@
     },
     createPaymentEndpoint: "/api/create-payment"
   };
-
-  async function syncLiveRaisedAmount() {
-    try {
-      const response = await fetch('/api/get-raised');
-      if (!response.ok) return;
-
-      const data = await response.json();
-      if (data.raisedUsd) {
-        CONFIG.raisedUsd = data.raisedUsd;
-        CONFIG.tokensSold = Math.round(CONFIG.raisedUsd / CONFIG.tokenPriceUsd);
-
-        const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
-
-        document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-        document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-        document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-        document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
-        document.getElementById('statSold').textContent = (CONFIG.tokensSold / 1000000).toFixed(1) + 'M';
-      }
-    } catch (err) {
-      console.log('Using default fallback numbers');
-    }
-  }
-
-  syncLiveRaisedAmount();
 
   let selectedTicker = 'btc';
   const payOpts = document.querySelectorAll('.pay-opt');
@@ -468,7 +435,6 @@
     btn.disabled = true;
 
     try {
-      // Round USD value to 2 decimal places to prevent float errors
       const usdValue = Number((amt * (CONFIG.rates[selectedTicker] || 0)).toFixed(2));
       
       if (usdValue < 10) {
@@ -483,7 +449,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pay_currency: selectedTicker,
-          price_amount_usd: usdValue,
+          price_amount: usdValue, // Correct key expected by NOWPayments
           order_description: 'AXON ($AXN) presale contribution'
         })
       });
