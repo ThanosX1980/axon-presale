@@ -100,7 +100,7 @@
 
   .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn{
-    padding:14px 28px;border-radius:9px;font-weight:600;font-size:15px;cursor:pointer;
+    padding:14px 28px;border-radius:99px;font-weight:600;font-size:15px;cursor:pointer;
     border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
   }
   .btn:hover{transform:translateY(-1px);}
@@ -398,41 +398,32 @@
       usdc: 1
     },
     createPaymentEndpoint: "/api/create-payment"
-  }; // Automatically pull live numbers from NOWPayments via your backend
-async function syncLiveRaisedAmount() {
-  try {
-    const response = await fetch('/api/get-raised');
-    if (!response.ok) return;
+  };
 
-    const data = await response.json();
-    if (data.raisedUsd) {
-      // Update config values with live total
-      CONFIG.raisedUsd = data.raisedUsd;
-      CONFIG.tokensSold = Math.round(CONFIG.raisedUsd / CONFIG.tokenPriceUsd);
+  async function syncLiveRaisedAmount() {
+    try {
+      const response = await fetch('/api/get-raised');
+      if (!response.ok) return;
 
-      // Recalculate progress bar percentage
-      const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+      const data = await response.json();
+      if (data.raisedUsd) {
+        CONFIG.raisedUsd = data.raisedUsd;
+        CONFIG.tokensSold = Math.round(CONFIG.raisedUsd / CONFIG.tokenPriceUsd);
 
-      // Update the HTML elements on the page live
-      document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-      document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-      document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-      document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
-      document.getElementById('statSold').textContent = (CONFIG.tokensSold / 1000000).toFixed(1) + 'M';
+        const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+
+        document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
+        document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+        document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+        document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+        document.getElementById('statSold').textContent = (CONFIG.tokensSold / 1000000).toFixed(1) + 'M';
+      }
+    } catch (err) {
+      console.log('Using default fallback numbers');
     }
-  } catch (err) {
-    console.log('Using default fallback numbers');
   }
-}
 
-// Execute sync when the user opens the page
-syncLiveRaisedAmount();
-
-
-  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
-  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+  syncLiveRaisedAmount();
 
   let selectedTicker = 'btc';
   const payOpts = document.querySelectorAll('.pay-opt');
@@ -442,18 +433,28 @@ syncLiveRaisedAmount();
       opt.classList.add('active');
       selectedTicker = opt.dataset.ticker;
       document.getElementById('payCurLabel').textContent = opt.textContent;
+      
+      // Auto-adjust default amount based on currency so user isn't below minimum limit
+      if (selectedTicker === 'usdterc20' || selectedTicker === 'usdc') {
+        if (parseFloat(amountInput.value) < 10) amountInput.value = "50";
+      } else if (selectedTicker === 'btc' && parseFloat(amountInput.value) > 10) {
+        amountInput.value = "0.001";
+      }
+      
       updateReceiveAmount();
     });
   });
 
   const amountInput = document.getElementById('payAmount');
   const receiveEl = document.getElementById('receiveAmt');
+  
   function updateReceiveAmount(){
     const amt = parseFloat(amountInput.value) || 0;
     const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
     const tokens = usdValue / CONFIG.tokenPriceUsd;
     receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
   }
+  
   amountInput.addEventListener('input', updateReceiveAmount);
   updateReceiveAmount();
 
@@ -467,7 +468,16 @@ syncLiveRaisedAmount();
     btn.disabled = true;
 
     try {
-      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
+      // Round USD value to 2 decimal places to prevent float errors
+      const usdValue = Number((amt * (CONFIG.rates[selectedTicker] || 0)).toFixed(2));
+      
+      if (usdValue < 10) {
+        alert('Minimum contribution amount is $10 USD equivalent.');
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return;
+      }
+
       const res = await fetch(CONFIG.createPaymentEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -477,18 +487,21 @@ syncLiveRaisedAmount();
           order_description: 'AXON ($AXN) presale contribution'
         })
       });
-      if(!res.ok){
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || 'Server error creating invoice');
-      }
+
       const data = await res.json();
-      if(data.invoice_url){
+
+      if (!res.ok) {
+        alert('NOWPayments Error: ' + (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error));
+        return;
+      }
+
+      if (data.invoice_url) {
         window.location.href = data.invoice_url;
       } else {
-        throw new Error('No invoice URL returned');
+        alert('No invoice URL returned from NOWPayments.');
       }
-    } catch (err){
-      alert('Could not start payment. ' + err.message + '\n\n(This button needs the backend proxy at ' + CONFIG.createPaymentEndpoint + ' to be deployed — see api/create-payment.js)');
+    } catch (err) {
+      alert('Connection Error: ' + err.message);
     } finally {
       btn.textContent = originalText;
       btn.disabled = false;
@@ -498,4 +511,3 @@ syncLiveRaisedAmount();
 
 </body>
 </html>
-
