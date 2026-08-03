@@ -189,28 +189,8 @@
     transition:box-shadow .15s ease, transform .15s ease;
   }
   .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
+  .buy-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
   .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
-
-  .pay-details{
-    margin-top:20px;padding:20px;border-radius:12px;
-    background:var(--bg-panel-2);border:1px solid var(--signal);
-    display:none;
-  }
-  .pay-details.show{display:block;}
-  .pay-details h4{font-size:13px;color:var(--signal-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;}
-  .pay-qr{display:block;width:160px;height:160px;margin:0 auto 16px;border-radius:8px;background:#fff;padding:8px;}
-  .pay-field{margin-bottom:12px;}
-  .pay-field .flbl{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
-  .pay-field .fval{
-    display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
-    border-radius:8px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:13px;
-    word-break:break-all;
-  }
-  .pay-field .fval button{
-    flex-shrink:0;background:var(--signal);color:#0a0a12;border:none;border-radius:6px;
-    padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;
-  }
-  .pay-status{font-size:12px;color:var(--text-dim);text-align:center;margin-top:14px;line-height:1.6;}
 
   .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
   .wallet-btn{
@@ -222,18 +202,6 @@
   .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
   .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
   .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
-
-  .pay-wallet-btn{
-    width:100%;margin-top:6px;padding:14px;border:1px solid var(--signal);border-radius:10px;
-    background:rgba(139,127,255,.1);color:var(--signal-2);font-weight:700;font-size:14.5px;cursor:pointer;
-  }
-  .pay-wallet-btn:hover{background:rgba(139,127,255,.18);}
-  .pay-wallet-btn:disabled{opacity:.5;cursor:not-allowed;}
-  .pay-divider{
-    display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text-dimmer);font-size:11px;
-    text-transform:uppercase;letter-spacing:.05em;
-  }
-  .pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--line);}
 
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
   .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
@@ -270,11 +238,6 @@
     color:var(--text-dimmer);font-size:12.5px;
   }
   footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
-
-  .placeholder-flag{
-    display:inline-block;background:rgba(255,61,113,.12);color:var(--pulse);
-    font-size:10.5px;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
-  }
 </style>
 </head>
 <body>
@@ -296,7 +259,7 @@
   <div class="wrap">
     <div class="badge"><span class="dot"></span>PRESALE LIVE — Flat price, no stage jumps</div>
     <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
-    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. Pay with BTC, ETH, BNB, USDT, MATIC, or USDC.</p>
+    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. Pay with ETH, BNB, USDT, MATIC, or USDC.</p>
 
     <div class="axon-visual">
       <svg viewBox="0 0 640 64" preserveAspectRatio="none">
@@ -350,8 +313,7 @@
 
     <div class="field-label">Pay with</div>
     <div class="pay-select" id="paySelect">
-      <div class="pay-opt active" data-ticker="btc">BTC</div>
-      <div class="pay-opt" data-ticker="eth">ETH</div>
+      <div class="pay-opt active" data-ticker="eth">ETH</div>
       <div class="pay-opt" data-ticker="bnbbsc">BNB</div>
       <div class="pay-opt" data-ticker="usdterc20">USDT</div>
       <div class="pay-opt" data-ticker="maticmainnet">MATIC</div>
@@ -361,7 +323,7 @@
     <div class="field-label">Amount</div>
     <div class="amount-input">
       <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
-      <span class="cur" id="payCurLabel">BTC</span>
+      <span class="cur" id="payCurLabel">ETH</span>
     </div>
 
     <div class="receive-box">
@@ -370,30 +332,7 @@
     </div>
 
     <button class="buy-btn" id="buyBtn">Buy $AXN</button>
-    <div class="buy-note">Payments are processed via NOWPayments. Send the exact amount shown to the address provided.</div>
-
-    <div class="pay-details" id="payDetails">
-      <h4>Send payment to complete purchase</h4>
-      <img id="payQr" class="pay-qr" src="" alt="Payment QR code">
-      <div class="pay-field">
-        <div class="flbl">Amount to send</div>
-        <div class="fval">
-          <span id="payAmountOut">—</span>
-          <button id="copyAmountBtn" type="button">Copy</button>
-        </div>
-      </div>
-      <div class="pay-field">
-        <div class="flbl">Send to address</div>
-        <div class="fval">
-          <span id="payAddressOut">—</span>
-          <button id="copyAddressBtn" type="button">Copy</button>
-        </div>
-      </div>
-      <div class="pay-status">Send exactly the amount shown, from any wallet or exchange. Your presale allocation is credited once the network confirms your transaction.</div>
-
-      <div class="pay-divider" id="payWalletDivider" style="display:none;">or</div>
-      <button class="pay-wallet-btn" id="payWithWalletBtn" type="button" style="display:none;">Pay with Connected Wallet</button>
-    </div>
+    <div class="buy-note">Transactions are submitted directly through your Web3 wallet.</div>
   </div>
 </section>
 
@@ -403,10 +342,10 @@
     <h2>How to buy</h2>
   </div>
   <div class="steps">
-    <div class="step"><div class="num">01</div><h3>Choose amount</h3><p>Pick your currency and enter how much you want to contribute.</p></div>
-    <div class="step"><div class="num">02</div><h3>Confirm invoice</h3><p>You're redirected to a secure NOWPayments invoice for your selected coin.</p></div>
-    <div class="step"><div class="num">03</div><h3>Send payment</h3><p>Pay from any wallet or exchange. Confirmations are tracked automatically.</p></div>
-    <div class="step"><div class="num">04</div><h3>Claim $AXN</h3><p>Tokens are distributed to your submitted wallet after presale close.</p></div>
+    <div class="step"><div class="num">01</div><h3>Connect Wallet</h3><p>Select your preferred token and click Buy $AXN to connect your wallet.</p></div>
+    <div class="step"><div class="num">02</div><h3>Enter Amount</h3><p>Specify how much you wish to contribute to the presale.</p></div>
+    <div class="step"><div class="num">03</div><h3>Confirm Transaction</h3><p>Approve the transaction request directly inside your connected Web3 wallet.</p></div>
+    <div class="step"><div class="num">04</div><h3>Claim $AXN</h3><p>Tokens are distributed to your wallet address after presale close.</p></div>
   </div>
 </section>
 
@@ -438,7 +377,7 @@
     </details>
     <details>
       <summary>When do I receive my tokens?</summary>
-      <p>Tokens are distributed to the wallet address you submit, after the presale ends and the claim portal opens.</p>
+      <p>Tokens are distributed to the wallet address you contribute from, after the presale ends and the claim portal opens.</p>
     </details>
     <details>
       <summary>Is this financial advice?</summary>
@@ -456,132 +395,29 @@
 
 <script>
   // ===================================================================
-  // CONFIG — edit these values directly. No API keys belong in this file.
+  // CONFIG — edit these values directly.
   // ===================================================================
   const CONFIG = {
     tokenPriceUsd: 0.001875,
-    raisedUsd: 0,          // presale not yet officially launched — starts at zero
-    tokensSold: 0,          // presale not yet officially launched — starts at zero
-    // Progress bar denominator = the actual presale target (not a public "hard cap" label)
+    raisedUsd: 0,          
+    tokensSold: 0,          
     softBarDenominatorUsd: 1500000,
-    // Rough display-only conversion rates for the calculator (USD per 1 unit).
-    // Replace with a live price feed for production accuracy.
+    
+    // Live price fallback/rates (USD per unit)
     rates: {
-      btc: 62000,
       eth: 3400,
       bnbbsc: 560,
       usdterc20: 1,
       maticmainnet: 0.55,
       usdc: 1
     },
-    // Your backend endpoint that creates a NOWPayments invoice.
+    
     createPaymentEndpoint: "/api/create-payment"
   };
 
-  // ---- stats bar fill ----
-  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
-  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
-  document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-  document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
-
-  // ---- pay currency selector ----
-  let selectedTicker = 'btc';
-  const payOpts = document.querySelectorAll('.pay-opt');
-  payOpts.forEach(opt => {
-    opt.addEventListener('click', () => {
-      payOpts.forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-      selectedTicker = opt.dataset.ticker;
-      document.getElementById('payCurLabel').textContent = opt.textContent;
-      updateReceiveAmount();
-    });
-  });
-
-  // ---- live receive calculator ----
-  const amountInput = document.getElementById('payAmount');
-  const receiveEl = document.getElementById('receiveAmt');
-  function updateReceiveAmount(){
-    const amt = parseFloat(amountInput.value) || 0;
-    const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
-    const tokens = usdValue / CONFIG.tokenPriceUsd;
-    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
-  }
-  amountInput.addEventListener('input', updateReceiveAmount);
-  updateReceiveAmount();
-
-  // ---- buy button: calls YOUR backend, never NOWPayments directly ----
-  document.getElementById('buyBtn').addEventListener('click', async () => {
-    const amt = parseFloat(amountInput.value);
-    if(!amt || amt <= 0){ alert('Enter an amount first.'); return; }
-
-    const btn = document.getElementById('buyBtn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Creating payment...';
-    btn.disabled = true;
-
-    try {
-      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
-      const res = await fetch(CONFIG.createPaymentEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pay_currency: selectedTicker,
-          price_amount_usd: usdValue,
-          order_description: 'AXON ($AXN) presale contribution'
-        })
-      });
-      if(!res.ok){
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || 'Server error creating payment');
-      }
-      const data = await res.json();
-      if(!data.pay_address){
-        throw new Error('No payment address returned. Raw response: ' + JSON.stringify(data));
-      }
-
-      // Show the payment details panel instead of redirecting anywhere
-      document.getElementById('payAmountOut').textContent = data.pay_amount + ' ' + (data.pay_currency || '').toUpperCase();
-      document.getElementById('payAddressOut').textContent = data.pay_address;
-      document.getElementById('payQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(data.pay_address);
-      document.getElementById('payDetails').classList.add('show');
-      lastPaymentInfo = { pay_address: data.pay_address, pay_amount: data.pay_amount, pay_currency: selectedTicker };
-      updateWalletPayButtonVisibility();
-      document.getElementById('payDetails').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    } catch (err){
-      alert('Could not create payment. ' + err.message);
-    } finally {
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
-  });
-
-  function copyToClipboard(text, btnEl){
-    navigator.clipboard.writeText(text).then(() => {
-      const original = btnEl.textContent;
-      btnEl.textContent = 'Copied!';
-      setTimeout(() => { btnEl.textContent = original; }, 1500);
-    });
-  }
-  document.getElementById('copyAmountBtn').addEventListener('click', function(){
-    copyToClipboard(document.getElementById('payAmountOut').textContent, this);
-  });
-  document.getElementById('copyAddressBtn').addEventListener('click', function(){
-    copyToClipboard(document.getElementById('payAddressOut').textContent, this);
-  });
-
-  // ===================================================================
-  // WALLET CONNECT (MetaMask / Trust Wallet browser extension or in-app browser)
-  // Supports native coin sends (ETH, BNB, MATIC) and ERC-20 token sends (USDT, USDC).
-  // BTC has no wallet-connect equivalent — those buyers always use the manual address.
-  // ===================================================================
-  let connectedAccount = null;
-  let lastPaymentInfo = null; // { pay_address, pay_amount, pay_currency (ticker) }
-
+  // Chains configuration for wallet-supported networks
   const CHAINS = {
-    eth:          { hex: '0x1',  decimals: 18, native: true },
+    eth:          { hex: '0x1', decimals: 18, native: true },
     bnbbsc:       { hex: '0x38', decimals: 18, native: true,
                      addParams: { chainName: 'BNB Smart Chain', nativeCurrency: {name:'BNB', symbol:'BNB', decimals:18},
                                   rpcUrls: ['https://bsc-dataseed.binance.org/'], blockExplorerUrls: ['https://bscscan.com'] } },
@@ -594,64 +430,108 @@
                      tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
   };
 
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const payWalletBtn = document.getElementById('payWithWalletBtn');
-  const payWalletDivider = document.getElementById('payWalletDivider');
+  // ---- Stats Bar Setup ----
+  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
+  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+  document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+  document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
 
-  async function connectWallet(){
-    if(!window.ethereum){
-      // No wallet browser detected — auto-redirect into MetaMask's own in-app browser,
-      // loaded directly on this page. Installs MetaMask first if not already on the device.
+  // ---- Currency Selector ----
+  let selectedTicker = 'eth'; 
+  const payOpts = document.querySelectorAll('.pay-opt');
+  payOpts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      payOpts.forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      selectedTicker = opt.dataset.ticker;
+      document.getElementById('payCurLabel').textContent = opt.textContent;
+      updateReceiveAmount();
+    });
+  });
+
+  // ---- Live Receive Calculator ----
+  const amountInput = document.getElementById('payAmount');
+  const receiveEl = document.getElementById('receiveAmt');
+  
+  function updateReceiveAmount(){
+    const amt = parseFloat(amountInput.value) || 0;
+    const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
+    const tokens = usdValue / CONFIG.tokenPriceUsd;
+    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
+  }
+  amountInput.addEventListener('input', updateReceiveAmount);
+  updateReceiveAmount();
+
+  // ---- Wallet Connection State ----
+  let connectedAccount = null;
+  const connectBtn = document.getElementById('connectWalletBtn');
+
+  function updateWalletUI(account) {
+    connectedAccount = account;
+    if (account) {
+      connectBtn.textContent = account.slice(0,6) + '…' + account.slice(-4);
+      connectBtn.classList.add('connected');
+      if (!connectBtn.querySelector('.wdot')) {
+        connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
+      }
+    } else {
+      connectBtn.textContent = 'Connect Wallet';
+      connectBtn.classList.remove('connected');
+    }
+  }
+
+  async function connectWallet() {
+    if (!window.ethereum) {
       const cleanUrl = window.location.host + window.location.pathname + window.location.search;
       window.location.href = 'https://metamask.app.link/dapp/' + cleanUrl;
-      return;
+      return null;
     }
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      connectedAccount = accounts[0];
-      connectBtn.textContent = connectedAccount.slice(0,6) + '…' + connectedAccount.slice(-4);
-      connectBtn.classList.add('connected');
-      connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
-      updateWalletPayButtonVisibility();
-    } catch (err){
-      alert('Wallet connection was not completed.');
+      updateWalletUI(accounts[0]);
+      return accounts[0];
+    } catch (err) {
+      alert('Wallet connection was rejected or failed.');
+      return null;
     }
   }
+
   connectBtn.addEventListener('click', connectWallet);
 
-  function updateWalletPayButtonVisibility(){
-    const supported = CHAINS[selectedTicker];
-    const show = connectedAccount && supported;
-    payWalletBtn.style.display = show ? 'block' : 'none';
-    payWalletDivider.style.display = show ? 'flex' : 'none';
+  // ---- Listen to Wallet Changes ----
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      updateWalletUI(accounts.length ? accounts[0] : null);
+    });
   }
 
-  function toHexWei(amountStr, decimals){
-    // Converts a decimal string amount to a hex-encoded integer in the token's smallest unit,
-    // without floating-point precision loss.
+  // ---- Helpers for Web3 Hex Conversions ----
+  function toHexWei(amountStr, decimals) {
     let [whole, frac = ''] = String(amountStr).split('.');
     frac = (frac + '0'.repeat(decimals)).slice(0, decimals);
     const combined = (whole + frac).replace(/^0+(?=\d)/, '');
     return '0x' + BigInt(combined || '0').toString(16);
   }
 
-  function buildErc20TransferData(toAddress, amountStr, decimals){
+  function buildErc20TransferData(toAddress, amountStr, decimals) {
     const selector = 'a9059cbb';
     const addrPadded = toAddress.replace('0x','').toLowerCase().padStart(64, '0');
     const amountHex = BigInt(toHexWei(amountStr, decimals)).toString(16).padStart(64, '0');
     return '0x' + selector + addrPadded + amountHex;
   }
 
-  async function ensureChain(hexChainId, addParams){
+  async function ensureChain(hexChainId, addParams) {
     const currentChain = await window.ethereum.request({ method: 'eth_chainId' });
-    if(currentChain === hexChainId) return;
+    if (currentChain === hexChainId) return;
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }]
       });
-    } catch (switchErr){
-      if(switchErr.code === 4902 && addParams){
+    } catch (switchErr) {
+      if (switchErr.code === 4902 && addParams) {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [{ chainId: hexChainId, ...addParams }]
@@ -662,46 +542,93 @@
     }
   }
 
-  payWalletBtn.addEventListener('click', async () => {
-    if(!lastPaymentInfo || !connectedAccount) return;
-    const chainInfo = CHAINS[lastPaymentInfo.pay_currency];
-    if(!chainInfo){ alert('Wallet payment is not supported for this currency.'); return; }
+  // ===================================================================
+  // CONSOLIDATED BUY FLOW
+  // Connects wallet -> Creates Invoice -> Switches Network -> Sends Tx
+  // ===================================================================
+  document.getElementById('buyBtn').addEventListener('click', async () => {
+    const amt = parseFloat(amountInput.value);
+    if (!amt || amt <= 0) { 
+      alert('Please enter a valid amount.'); 
+      return; 
+    }
 
-    payWalletBtn.disabled = true;
-    payWalletBtn.textContent = 'Confirm in your wallet...';
+    const buyBtn = document.getElementById('buyBtn');
+    const originalText = buyBtn.textContent;
 
     try {
+      // 1. Connect wallet if not connected
+      let account = connectedAccount;
+      if (!account) {
+        buyBtn.textContent = 'Connecting Wallet...';
+        account = await connectWallet();
+        if (!account) return; 
+      }
+
+      // 2. Create Payment Invoice
+      buyBtn.textContent = 'Generating Invoice...';
+      buyBtn.disabled = true;
+
+      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
+      const res = await fetch(CONFIG.createPaymentEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pay_currency: selectedTicker,
+          price_amount_usd: usdValue,
+          order_description: 'AXON ($AXN) presale contribution'
+        })
+      });
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || 'Failed to create payment invoice.');
+      }
+
+      const data = await res.json();
+      if (!data.pay_address || !data.pay_amount) {
+        throw new Error('Invalid response from payment server.');
+      }
+
+      // 3. Prepare Network and Transaction Params
+      buyBtn.textContent = 'Confirm in Wallet...';
+      const chainInfo = CHAINS[selectedTicker];
+      if (!chainInfo) {
+        throw new Error('Unsupported network currency selected.');
+      }
+
       await ensureChain(chainInfo.hex, chainInfo.addParams);
 
       let txParams;
-      if(chainInfo.native){
+      if (chainInfo.native) {
         txParams = {
-          from: connectedAccount,
-          to: lastPaymentInfo.pay_address,
-          value: toHexWei(String(lastPaymentInfo.pay_amount), chainInfo.decimals)
+          from: account,
+          to: data.pay_address,
+          value: toHexWei(String(data.pay_amount), chainInfo.decimals)
         };
       } else {
         txParams = {
-          from: connectedAccount,
+          from: account,
           to: chainInfo.tokenAddress,
           value: '0x0',
-          data: buildErc20TransferData(lastPaymentInfo.pay_address, String(lastPaymentInfo.pay_amount), chainInfo.decimals)
+          data: buildErc20TransferData(data.pay_address, String(data.pay_amount), chainInfo.decimals)
         };
       }
 
+      // 4. Send Transaction via Connected Wallet
       const txHash = await window.ethereum.request({
         method: 'eth_sendTransaction',
         params: [txParams]
       });
 
-      payWalletBtn.textContent = 'Transaction sent ✓';
-      alert('Transaction submitted. Hash: ' + txHash + '\n\nYour presale allocation will be credited once the network confirms it.');
+      alert('Success! Transaction submitted.\nHash: ' + txHash + '\n\nYour allocation will be credited once confirmed.');
 
-    } catch (err){
-      alert('Wallet payment was not completed. ' + (err.message || ''));
-      payWalletBtn.textContent = 'Pay with Connected Wallet';
+    } catch (err) {
+      console.error(err);
+      alert('Transaction was not completed: ' + (err.message || 'User rejected request.'));
     } finally {
-      payWalletBtn.disabled = false;
+      buyBtn.textContent = originalText;
+      buyBtn.disabled = false;
     }
   });
 </script>
