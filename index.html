@@ -212,6 +212,29 @@
   }
   .pay-status{font-size:12px;color:var(--text-dim);text-align:center;margin-top:14px;line-height:1.6;}
 
+  .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
+  .wallet-btn{
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:9px;
+    padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .wallet-btn:hover{border-color:var(--signal);}
+  .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
+  .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
+  .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
+
+  .pay-wallet-btn{
+    width:100%;margin-top:6px;padding:14px;border:1px solid var(--signal);border-radius:10px;
+    background:rgba(139,127,255,.1);color:var(--signal-2);font-weight:700;font-size:14.5px;cursor:pointer;
+  }
+  .pay-wallet-btn:hover{background:rgba(139,127,255,.18);}
+  .pay-wallet-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .pay-divider{
+    display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text-dimmer);font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;
+  }
+  .pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--line);}
+
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
   .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
   .step .num{
@@ -312,6 +335,10 @@
   </div>
 
   <div class="buy-card">
+    <div class="wallet-connect-row">
+      <button class="wallet-btn" id="connectWalletBtn" type="button"><span class="wdot"></span>Connect Wallet</button>
+    </div>
+
     <div class="presale-bar-wrap">
       <div class="presale-bar-top">
         <span>Raised so far</span>
@@ -363,6 +390,9 @@
         </div>
       </div>
       <div class="pay-status">Send exactly the amount shown, from any wallet or exchange. Your presale allocation is credited once the network confirms your transaction.</div>
+
+      <div class="pay-divider" id="payWalletDivider" style="display:none;">or</div>
+      <button class="pay-wallet-btn" id="payWithWalletBtn" type="button" style="display:none;">Pay with Connected Wallet</button>
     </div>
   </div>
 </section>
@@ -516,6 +546,8 @@
       document.getElementById('payAddressOut').textContent = data.pay_address;
       document.getElementById('payQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(data.pay_address);
       document.getElementById('payDetails').classList.add('show');
+      lastPaymentInfo = { pay_address: data.pay_address, pay_amount: data.pay_amount, pay_currency: selectedTicker };
+      updateWalletPayButtonVisibility();
       document.getElementById('payDetails').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
     } catch (err){
@@ -538,6 +570,136 @@
   });
   document.getElementById('copyAddressBtn').addEventListener('click', function(){
     copyToClipboard(document.getElementById('payAddressOut').textContent, this);
+  });
+
+  // ===================================================================
+  // WALLET CONNECT (MetaMask / Trust Wallet browser extension or in-app browser)
+  // Supports native coin sends (ETH, BNB, MATIC) and ERC-20 token sends (USDT, USDC).
+  // BTC has no wallet-connect equivalent — those buyers always use the manual address.
+  // ===================================================================
+  let connectedAccount = null;
+  let lastPaymentInfo = null; // { pay_address, pay_amount, pay_currency (ticker) }
+
+  const CHAINS = {
+    eth:          { hex: '0x1',  decimals: 18, native: true },
+    bnbbsc:       { hex: '0x38', decimals: 18, native: true,
+                     addParams: { chainName: 'BNB Smart Chain', nativeCurrency: {name:'BNB', symbol:'BNB', decimals:18},
+                                  rpcUrls: ['https://bsc-dataseed.binance.org/'], blockExplorerUrls: ['https://bscscan.com'] } },
+    maticmainnet: { hex: '0x89', decimals: 18, native: true,
+                     addParams: { chainName: 'Polygon Mainnet', nativeCurrency: {name:'MATIC', symbol:'MATIC', decimals:18},
+                                  rpcUrls: ['https://polygon-rpc.com/'], blockExplorerUrls: ['https://polygonscan.com'] } },
+    usdterc20:    { hex: '0x1', decimals: 6, native: false,
+                     tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
+    usdc:         { hex: '0x1', decimals: 6, native: false,
+                     tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
+  };
+
+  const connectBtn = document.getElementById('connectWalletBtn');
+  const payWalletBtn = document.getElementById('payWithWalletBtn');
+  const payWalletDivider = document.getElementById('payWalletDivider');
+
+  async function connectWallet(){
+    if(!window.ethereum){
+      alert('No wallet browser detected. Open this page inside the MetaMask or Trust Wallet app browser, or install the MetaMask extension.');
+      return;
+    }
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      connectedAccount = accounts[0];
+      connectBtn.textContent = connectedAccount.slice(0,6) + '…' + connectedAccount.slice(-4);
+      connectBtn.classList.add('connected');
+      connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
+      updateWalletPayButtonVisibility();
+    } catch (err){
+      alert('Wallet connection was not completed.');
+    }
+  }
+  connectBtn.addEventListener('click', connectWallet);
+
+  function updateWalletPayButtonVisibility(){
+    const supported = CHAINS[selectedTicker];
+    const show = connectedAccount && supported;
+    payWalletBtn.style.display = show ? 'block' : 'none';
+    payWalletDivider.style.display = show ? 'flex' : 'none';
+  }
+
+  function toHexWei(amountStr, decimals){
+    // Converts a decimal string amount to a hex-encoded integer in the token's smallest unit,
+    // without floating-point precision loss.
+    let [whole, frac = ''] = String(amountStr).split('.');
+    frac = (frac + '0'.repeat(decimals)).slice(0, decimals);
+    const combined = (whole + frac).replace(/^0+(?=\d)/, '');
+    return '0x' + BigInt(combined || '0').toString(16);
+  }
+
+  function buildErc20TransferData(toAddress, amountStr, decimals){
+    const selector = 'a9059cbb';
+    const addrPadded = toAddress.replace('0x','').toLowerCase().padStart(64, '0');
+    const amountHex = BigInt(toHexWei(amountStr, decimals)).toString(16).padStart(64, '0');
+    return '0x' + selector + addrPadded + amountHex;
+  }
+
+  async function ensureChain(hexChainId, addParams){
+    const currentChain = await window.ethereum.request({ method: 'eth_chainId' });
+    if(currentChain === hexChainId) return;
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexChainId }]
+      });
+    } catch (switchErr){
+      if(switchErr.code === 4902 && addParams){
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: hexChainId, ...addParams }]
+        });
+      } else {
+        throw switchErr;
+      }
+    }
+  }
+
+  payWalletBtn.addEventListener('click', async () => {
+    if(!lastPaymentInfo || !connectedAccount) return;
+    const chainInfo = CHAINS[lastPaymentInfo.pay_currency];
+    if(!chainInfo){ alert('Wallet payment is not supported for this currency.'); return; }
+
+    payWalletBtn.disabled = true;
+    payWalletBtn.textContent = 'Confirm in your wallet...';
+
+    try {
+      await ensureChain(chainInfo.hex, chainInfo.addParams);
+
+      let txParams;
+      if(chainInfo.native){
+        txParams = {
+          from: connectedAccount,
+          to: lastPaymentInfo.pay_address,
+          value: toHexWei(String(lastPaymentInfo.pay_amount), chainInfo.decimals)
+        };
+      } else {
+        txParams = {
+          from: connectedAccount,
+          to: chainInfo.tokenAddress,
+          value: '0x0',
+          data: buildErc20TransferData(lastPaymentInfo.pay_address, String(lastPaymentInfo.pay_amount), chainInfo.decimals)
+        };
+      }
+
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [txParams]
+      });
+
+      payWalletBtn.textContent = 'Transaction sent ✓';
+      alert('Transaction submitted. Hash: ' + txHash + '\n\nYour presale allocation will be credited once the network confirms it.');
+
+    } catch (err){
+      alert('Wallet payment was not completed. ' + (err.message || ''));
+      payWalletBtn.textContent = 'Pay with Connected Wallet';
+    } finally {
+      payWalletBtn.disabled = false;
+    }
   });
 </script>
 
