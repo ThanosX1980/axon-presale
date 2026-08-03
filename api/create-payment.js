@@ -1,71 +1,47 @@
+// api/create-payment.js (Node.js Serverless Function / Express route)
+
 export default async function handler(req, res) {
+  // Only accept POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.NOWPAYMENTS_API_KEY;
-
-  if (!apiKey) {
-    return res.status(500).json({
-      error: 'Server is not configured with a NOWPayments API key.'
-    });
-  }
-
-  const {
-    pay_currency,
-    price_amount_usd,
-    order_description
-  } = req.body || {};
-
-  if (!pay_currency || !price_amount_usd || price_amount_usd <= 0) {
-    return res.status(400).json({
-      error: 'pay_currency and a positive price_amount_usd are required.'
-    });
-  }
-
   try {
-    const paymentData = {
-      price_amount: price_amount_usd,
-      price_currency: 'usd',
-      pay_currency: pay_currency.toLowerCase(),
-      order_id: `axon-${Date.now()}`,
-      order_description:
-        order_description || 'AXON ($AXN) presale contribution'
-    };
+    const { pay_currency, price_amount_usd, pay_amount, buyer_address, order_description } = req.body;
 
-    // Direct payment endpoint — returns a pay_address to display on OUR page,
-    // instead of a hosted invoice_url that redirects to NOWPayments' own site.
-    const npRes = await fetch('https://api.nowpayments.io/v1/payment', {
+    // Call your payment gateway API (e.g. NOWPayments)
+    const response = await fetch('https://api.nowpayments.io/v1/payment', {
       method: 'POST',
       headers: {
-        'x-api-key': apiKey,
+        'x-api-key': process.env.NOWPAYMENTS_API_KEY, // Stored safely in environment variables
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(paymentData)
+      body: JSON.stringify({
+        price_amount: price_amount_usd,
+        price_currency: 'usd',
+        pay_currency: pay_currency,
+        ipn_callback_url: process.env.CALLBACK_URL,
+        order_description: order_description || 'AXON Presale Contribution',
+        // Optional: pass buyer wallet address or metadata
+        order_id: buyer_address ? `${buyer_address}_${Date.now()}` : undefined
+      })
     });
 
-    const data = await npRes.json();
+    const data = await response.json();
 
-    if (!npRes.ok) {
-      return res.status(npRes.status).json({
-        error: data.message || 'NOWPayments error',
-        details: data
-      });
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.message || 'Payment processor error' });
     }
 
+    // Return receiving details back to the frontend HTML script
     return res.status(200).json({
-      payment_id: data.payment_id,
       pay_address: data.pay_address,
-      pay_amount: data.pay_amount,
-      pay_currency: data.pay_currency,
-      payment_status: data.payment_status
+      pay_amount: data.pay_amount || pay_amount,
+      payment_id: data.payment_id
     });
 
-  } catch (err) {
-    console.error(err);
-
-    return res.status(500).json({
-      error: 'Failed to reach NOWPayments.'
-    });
+  } catch (error) {
+    console.error('Create payment error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
