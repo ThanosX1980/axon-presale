@@ -1,3 +1,4 @@
+Here is the updated HTML/JavaScript code. The price parameter has been updated to 0.001875 (matching the $1,500,000 / 800,000,000 AXN presale math from the whitepaper) across the stats display, JS config, FAQ text, and calculation logic.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -277,8 +278,8 @@
 <div class="wrap">
   <div class="stats">
     <div class="stat"><div class="val" id="statRaised">$142,850</div><div class="lbl">Raised</div></div>
-    <div class="stat"><div class="val" id="statSold">913.9M</div><div class="lbl">$AXN Sold</div></div>
-    <div class="stat"><div class="val">$0.00015625</div><div class="lbl">Price / Token</div></div>
+    <div class="stat"><div class="val" id="statSold">76.1M</div><div class="lbl">$AXN Sold</div></div>
+    <div class="stat"><div class="val">$0.001875</div><div class="lbl">Price / Token</div></div>
     <div class="stat"><div class="val" id="statHolders">1,204</div><div class="lbl">Participants</div></div>
   </div>
 </div>
@@ -297,7 +298,7 @@
         <span class="raised mono" id="barRaisedLabel">$142,850</span>
       </div>
       <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:38%"></div></div>
-      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">913,920,000 $AXN</span></div>
+      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">76,186,666 $AXN</span></div>
     </div>
 
     <div class="field-label">Pay with</div>
@@ -343,15 +344,14 @@
   <div class="section-head">
     <div class="kicker">Tokenomics</div>
     <h2>Supply breakdown</h2>
-    <p>Placeholder allocation<span class="placeholder-flag">EDIT ME</span> — replace with your real figures before launch.</p>
+    <p>Aligned with Version 2.1 tokenomics structure.</p>
   </div>
   <div class="tokenomics">
     <div class="tok-list">
-      <div class="tok-row"><span class="tok-swatch" style="background:#8b7fff"></span>Presale <span class="pct">40%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#5ee6c8"></span>Liquidity <span class="pct">25%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#ff3d71"></span>Team (locked) <span class="pct">15%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#54536b"></span>Marketing <span class="pct">10%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#26263a"></span>Ecosystem/Reserve <span class="pct">10%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#8b7fff"></span>Presale & Liquidity <span class="pct">80%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#5ee6c8"></span>CEX Listings & Marketing <span class="pct">10%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#ff3d71"></span>Community Rewards <span class="pct">10%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#26263a"></span>Team & Founders <span class="pct">0%</span></div>
     </div>
   </div>
 </section>
@@ -364,11 +364,11 @@
   <div class="faq">
     <details open>
       <summary>How is my "tokens received" amount calculated?</summary>
-      <p>At the flat presale price of $0.00015625 per $AXN, your contribution amount (converted to USD at time of payment) is divided by the token price to estimate your allocation.</p>
+      <p>At the flat presale price of $0.001875 per $AXN, your contribution amount (converted to USD at time of payment) is divided by the token price to estimate your allocation.</p>
     </details>
     <details>
       <summary>When do I receive my tokens?</summary>
-      <p>Tokens are distributed to the wallet address you submit, after the presale ends and the claim portal opens. <span class="placeholder-flag">EDIT ME — confirm your real distribution timeline</span></p>
+      <p>Tokens are distributed to the wallet address you submit, after the presale ends and the claim portal opens.</p>
     </details>
     <details>
       <summary>Is this financial advice?</summary>
@@ -386,10 +386,10 @@
 
 <script>
   const CONFIG = {
-    tokenPriceUsd: 0.00015625,
+    tokenPriceUsd: 0.001875,
     raisedUsd: 142850,
-    tokensSold: 913920000,
-    softBarDenominatorUsd: 375000,
+    tokensSold: Math.round(142850 / 0.001875),
+    softBarDenominatorUsd: 1500000,
     rates: {
       btc: 62000,
       eth: 3400,
@@ -470,3 +470,4 @@
 
 </body>
 </html>
+
