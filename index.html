@@ -141,7 +141,7 @@
     height:100%;border-radius:999px;
     background:linear-gradient(90deg,var(--signal),var(--signal-2));
     position:relative;
-    width:var(--fill,38%);
+    width:var(--fill,0%);
     transition:width .6s ease;
   }
   .presale-bar-fill::after{
@@ -276,10 +276,10 @@
 
 <div class="wrap">
   <div class="stats">
-    <div class="stat"><div class="val" id="statRaised">$142,850</div><div class="lbl">Raised</div></div>
-    <div class="stat"><div class="val" id="statSold">76.1M</div><div class="lbl">$AXN Sold</div></div>
+    <div class="stat"><div class="val" id="statRaised">$0</div><div class="lbl">Raised</div></div>
+    <div class="stat"><div class="val" id="statSold">0</div><div class="lbl">$AXN Sold</div></div>
     <div class="stat"><div class="val">$0.001875</div><div class="lbl">Price / Token</div></div>
-    <div class="stat"><div class="val" id="statHolders">1,204</div><div class="lbl">Participants</div></div>
+    <div class="stat"><div class="val" id="statHolders">0</div><div class="lbl">Participants</div></div>
   </div>
 </div>
 
@@ -294,10 +294,10 @@
     <div class="presale-bar-wrap">
       <div class="presale-bar-top">
         <span>Raised so far</span>
-        <span class="raised mono" id="barRaisedLabel">$142,850</span>
+        <span class="raised mono" id="barRaisedLabel">$0</span>
       </div>
-      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:38%"></div></div>
-      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">76,186,666 $AXN</span></div>
+      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
+      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">0 $AXN</span></div>
     </div>
 
     <div class="field-label">Pay with</div>
@@ -384,11 +384,17 @@
 </footer>
 
 <script>
+  // ===================================================================
+  // CONFIG — edit these values directly. No API keys belong in this file.
+  // ===================================================================
   const CONFIG = {
     tokenPriceUsd: 0.001875,
-    raisedUsd: 142850,
-    tokensSold: Math.round(142850 / 0.001875),
+    raisedUsd: 0,          // presale not yet officially launched — starts at zero
+    tokensSold: 0,          // presale not yet officially launched — starts at zero
+    // Progress bar denominator = the actual presale target (not a public "hard cap" label)
     softBarDenominatorUsd: 1500000,
+    // Rough display-only conversion rates for the calculator (USD per 1 unit).
+    // Replace with a live price feed for production accuracy.
     rates: {
       btc: 62000,
       eth: 3400,
@@ -397,14 +403,19 @@
       maticmainnet: 0.55,
       usdc: 1
     },
+    // Your backend endpoint that creates a NOWPayments invoice.
     createPaymentEndpoint: "/api/create-payment"
   };
 
+  // ---- stats bar fill ----
   const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
   document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
   document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
   document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+  document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+  document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
 
+  // ---- pay currency selector ----
   let selectedTicker = 'btc';
   const payOpts = document.querySelectorAll('.pay-opt');
   payOpts.forEach(opt => {
@@ -417,6 +428,7 @@
     });
   });
 
+  // ---- live receive calculator ----
   const amountInput = document.getElementById('payAmount');
   const receiveEl = document.getElementById('receiveAmt');
   function updateReceiveAmount(){
@@ -428,6 +440,7 @@
   amountInput.addEventListener('input', updateReceiveAmount);
   updateReceiveAmount();
 
+  // ---- buy button: calls YOUR backend, never NOWPayments directly ----
   document.getElementById('buyBtn').addEventListener('click', async () => {
     const amt = parseFloat(amountInput.value);
     if(!amt || amt <= 0){ alert('Enter an amount first.'); return; }
