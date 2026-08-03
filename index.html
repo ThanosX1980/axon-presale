@@ -100,7 +100,7 @@
 
   .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn{
-    padding:14px 28px;border-radius:99px;font-weight:600;font-size:15px;cursor:pointer;
+    padding:14px 28px;border-radius:9px;font-weight:600;font-size:15px;cursor:pointer;
     border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
   }
   .btn:hover{transform:translateY(-1px);}
@@ -226,6 +226,11 @@
     color:var(--text-dimmer);font-size:12.5px;
   }
   footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
+
+  .placeholder-flag{
+    display:inline-block;background:rgba(255,61,113,.12);color:var(--pulse);
+    font-size:10.5px;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+  }
 </style>
 </head>
 <body>
@@ -381,6 +386,9 @@
 <script>
   const CONFIG = {
     tokenPriceUsd: 0.001875,
+    raisedUsd: 142850,
+    tokensSold: Math.round(142850 / 0.001875),
+    softBarDenominatorUsd: 1500000,
     rates: {
       btc: 62000,
       eth: 3400,
@@ -392,6 +400,11 @@
     createPaymentEndpoint: "/api/create-payment"
   };
 
+  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
+  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+
   let selectedTicker = 'btc';
   const payOpts = document.querySelectorAll('.pay-opt');
   payOpts.forEach(opt => {
@@ -400,28 +413,18 @@
       opt.classList.add('active');
       selectedTicker = opt.dataset.ticker;
       document.getElementById('payCurLabel').textContent = opt.textContent;
-      
-      // Auto-adjust default amount based on currency so user isn't below minimum limit
-      if (selectedTicker === 'usdterc20' || selectedTicker === 'usdc') {
-        if (parseFloat(amountInput.value) < 10) amountInput.value = "50";
-      } else if (selectedTicker === 'btc' && parseFloat(amountInput.value) > 10) {
-        amountInput.value = "0.001";
-      }
-      
       updateReceiveAmount();
     });
   });
 
   const amountInput = document.getElementById('payAmount');
   const receiveEl = document.getElementById('receiveAmt');
-  
   function updateReceiveAmount(){
     const amt = parseFloat(amountInput.value) || 0;
     const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
     const tokens = usdValue / CONFIG.tokenPriceUsd;
     receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
   }
-  
   amountInput.addEventListener('input', updateReceiveAmount);
   updateReceiveAmount();
 
@@ -435,39 +438,28 @@
     btn.disabled = true;
 
     try {
-      const usdValue = Number((amt * (CONFIG.rates[selectedTicker] || 0)).toFixed(2));
-      
-      if (usdValue < 10) {
-        alert('Minimum contribution amount is $10 USD equivalent.');
-        btn.textContent = originalText;
-        btn.disabled = false;
-        return;
-      }
-
+      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
       const res = await fetch(CONFIG.createPaymentEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pay_currency: selectedTicker,
-          price_amount: usdValue, // Correct key expected by NOWPayments
+          price_amount_usd: usdValue,
           order_description: 'AXON ($AXN) presale contribution'
         })
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert('NOWPayments Error: ' + (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error));
-        return;
+      if(!res.ok){
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || 'Server error creating invoice');
       }
-
-      if (data.invoice_url) {
+      const data = await res.json();
+      if(data.invoice_url){
         window.location.href = data.invoice_url;
       } else {
-        alert('No invoice URL returned from NOWPayments.');
+        throw new Error('No invoice URL returned');
       }
-    } catch (err) {
-      alert('Connection Error: ' + err.message);
+    } catch (err){
+      alert('Could not start payment. ' + err.message + '\n\n(This button needs the backend proxy at ' + CONFIG.createPaymentEndpoint + ' to be deployed — see api/create-payment.js)');
     } finally {
       btn.textContent = originalText;
       btn.disabled = false;
