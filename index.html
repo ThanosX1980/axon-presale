@@ -508,7 +508,7 @@
       }
       const data = await res.json();
       if(!data.pay_address){
-        throw new Error('No payment address returned');
+        throw new Error('No payment address returned. Raw response: ' + JSON.stringify(data));
       }
 
       // Show the payment details panel instead of redirecting anywhere
