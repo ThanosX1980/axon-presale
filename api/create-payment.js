@@ -29,7 +29,12 @@ export default async function handler(req, res) {
     const invoiceData = {
       price_amount: price_amount_usd,
       price_currency: 'usd',
-      pay_currency: currency,
+      pay_currency: 
+      currency === "bnb"
+    ? "BNBBSC"
+    : currency === "usdt"
+    ? "USDTBSC"
+    : currency.toUpperCase(),
       order_id: `axon-${Date.now()}`,
       order_description:
         order_description || 'AXON ($AXN) presale contribution',
