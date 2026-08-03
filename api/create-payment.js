@@ -24,25 +24,24 @@ export default async function handler(req, res) {
   }
 
   try {
-    const invoiceData = {
+    const paymentData = {
       price_amount: price_amount_usd,
       price_currency: 'usd',
       pay_currency: pay_currency.toLowerCase(),
       order_id: `axon-${Date.now()}`,
       order_description:
-        order_description || 'AXON ($AXN) presale contribution',
-      success_url: 'https://yourdomain.com/thank-you',
-      cancel_url: 'https://yourdomain.com/#buy',
-      ipn_callback_url: 'https://yourdomain.com/api/payment-webhook'
+        order_description || 'AXON ($AXN) presale contribution'
     };
 
-    const npRes = await fetch('https://api.nowpayments.io/v1/invoice', {
+    // Direct payment endpoint — returns a pay_address to display on OUR page,
+    // instead of a hosted invoice_url that redirects to NOWPayments' own site.
+    const npRes = await fetch('https://api.nowpayments.io/v1/payment', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(invoiceData)
+      body: JSON.stringify(paymentData)
     });
 
     const data = await npRes.json();
@@ -55,8 +54,11 @@ export default async function handler(req, res) {
     }
 
     return res.status(200).json({
-      invoice_url: data.invoice_url,
-      invoice_id: data.id
+      payment_id: data.payment_id,
+      pay_address: data.pay_address,
+      pay_amount: data.pay_amount,
+      pay_currency: data.pay_currency,
+      payment_status: data.payment_status
     });
 
   } catch (err) {
