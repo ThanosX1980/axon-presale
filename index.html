@@ -100,7 +100,7 @@
 
   .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn{
-    padding:14px 28px;border-radius:9px;font-weight:600;font-size:15px;cursor:pointer;
+    padding:14px 28px;border-radius:99px;font-weight:600;font-size:15px;cursor:pointer;
     border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
   }
   .btn:hover{transform:translateY(-1px);}
@@ -403,7 +403,7 @@
     tokensSold: 0,          
     softBarDenominatorUsd: 1500000,
     
-    // Live price fallback/rates (USD per unit)
+    // Live price fallbacks (USD per unit)
     rates: {
       eth: 3400,
       bnbbsc: 560,
@@ -414,6 +414,24 @@
     
     createPaymentEndpoint: "/api/create-payment"
   };
+
+  // Dynamic live rate fetcher (CoinGecko public price endpoint)
+  async function fetchLiveRates() {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,binancecoin,tether,matic-network,usd-coin&vs_currencies=usd');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ethereum?.usd) CONFIG.rates.eth = data.ethereum.usd;
+        if (data.binancecoin?.usd) CONFIG.rates.bnbbsc = data.binancecoin.usd;
+        if (data.tether?.usd) CONFIG.rates.usdterc20 = data.tether.usd;
+        if (data['matic-network']?.usd) CONFIG.rates.maticmainnet = data['matic-network'].usd;
+        if (data['usd-coin']?.usd) CONFIG.rates.usdc = data['usd-coin'].usd;
+        updateReceiveAmount();
+      }
+    } catch (e) {
+      console.warn('Live rate update unavailable, using standard defaults.', e);
+    }
+  }
 
   // Chains configuration for wallet-supported networks
   const CHAINS = {
@@ -462,7 +480,6 @@
     receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
   }
   amountInput.addEventListener('input', updateReceiveAmount);
-  updateReceiveAmount();
 
   // ---- Wallet Connection State ----
   let connectedAccount = null;
@@ -576,6 +593,8 @@
         body: JSON.stringify({
           pay_currency: selectedTicker,
           price_amount_usd: usdValue,
+          pay_amount: amt,
+          buyer_address: account,
           order_description: 'AXON ($AXN) presale contribution'
         })
       });
@@ -586,8 +605,13 @@
       }
 
       const data = await res.json();
-      if (!data.pay_address || !data.pay_amount) {
-        throw new Error('Invalid response from payment server.');
+      
+      // Strict fallback prioritization for backend values
+      const payAddress = data.pay_address || data.depositAddress || data.address;
+      const exactPayAmount = data.pay_amount ?? data.amount ?? amt;
+
+      if (!payAddress) {
+        throw new Error('Invalid response from payment server: missing receiving address.');
       }
 
       // 3. Prepare Network and Transaction Params
@@ -603,15 +627,15 @@
       if (chainInfo.native) {
         txParams = {
           from: account,
-          to: data.pay_address,
-          value: toHexWei(String(data.pay_amount), chainInfo.decimals)
+          to: payAddress,
+          value: toHexWei(String(exactPayAmount), chainInfo.decimals)
         };
       } else {
         txParams = {
           from: account,
           to: chainInfo.tokenAddress,
           value: '0x0',
-          data: buildErc20TransferData(data.pay_address, String(data.pay_amount), chainInfo.decimals)
+          data: buildErc20TransferData(payAddress, String(exactPayAmount), chainInfo.decimals)
         };
       }
 
@@ -631,6 +655,10 @@
       buyBtn.disabled = false;
     }
   });
+
+  // Initialize live exchange rates on page load
+  fetchLiveRates();
+  updateReceiveAmount();
 </script>
 
 </body>
