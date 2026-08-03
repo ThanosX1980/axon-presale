@@ -23,18 +23,11 @@ export default async function handler(req, res) {
     });
   }
 
-  const currency = pay_currency.toLowerCase();
-
   try {
     const invoiceData = {
       price_amount: price_amount_usd,
       price_currency: 'usd',
-      pay_currency: 
-      currency === "bnb"
-    ? "BNBBSC"
-    : currency === "usdt"
-    ? "USDTBSC"
-    : currency.toUpperCase(),
+      pay_currency: pay_currency.toLowerCase(),
       order_id: `axon-${Date.now()}`,
       order_description:
         order_description || 'AXON ($AXN) presale contribution',
@@ -42,11 +35,6 @@ export default async function handler(req, res) {
       cancel_url: 'https://yourdomain.com/#buy',
       ipn_callback_url: 'https://yourdomain.com/api/payment-webhook'
     };
-
-    // Force BNB and USDT onto BNB Smart Chain (BEP-20)
-    if (currency === 'bnb' || currency === 'usdt') {
-      invoiceData.pay_network = 'bsc';
-    }
 
     const npRes = await fetch('https://api.nowpayments.io/v1/invoice', {
       method: 'POST',
