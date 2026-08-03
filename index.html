@@ -600,7 +600,10 @@
 
   async function connectWallet(){
     if(!window.ethereum){
-      alert('No wallet browser detected. Open this page inside the MetaMask or Trust Wallet app browser, or install the MetaMask extension.');
+      // No wallet browser detected — auto-redirect into MetaMask's own in-app browser,
+      // loaded directly on this page. Installs MetaMask first if not already on the device.
+      const cleanUrl = window.location.host + window.location.pathname + window.location.search;
+      window.location.href = 'https://metamask.app.link/dapp/' + cleanUrl;
       return;
     }
     try {
