@@ -191,6 +191,27 @@
   .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
   .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
 
+  .pay-details{
+    margin-top:20px;padding:20px;border-radius:12px;
+    background:var(--bg-panel-2);border:1px solid var(--signal);
+    display:none;
+  }
+  .pay-details.show{display:block;}
+  .pay-details h4{font-size:13px;color:var(--signal-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;}
+  .pay-qr{display:block;width:160px;height:160px;margin:0 auto 16px;border-radius:8px;background:#fff;padding:8px;}
+  .pay-field{margin-bottom:12px;}
+  .pay-field .flbl{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+  .pay-field .fval{
+    display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
+    border-radius:8px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    word-break:break-all;
+  }
+  .pay-field .fval button{
+    flex-shrink:0;background:var(--signal);color:#0a0a12;border:none;border-radius:6px;
+    padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;
+  }
+  .pay-status{font-size:12px;color:var(--text-dim);text-align:center;margin-top:14px;line-height:1.6;}
+
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
   .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
   .step .num{
@@ -322,7 +343,27 @@
     </div>
 
     <button class="buy-btn" id="buyBtn">Buy $AXN</button>
-    <div class="buy-note">Payments are processed via NOWPayments. You'll be redirected to a secure hosted invoice to complete payment.</div>
+    <div class="buy-note">Payments are processed via NOWPayments. Send the exact amount shown to the address provided.</div>
+
+    <div class="pay-details" id="payDetails">
+      <h4>Send payment to complete purchase</h4>
+      <img id="payQr" class="pay-qr" src="" alt="Payment QR code">
+      <div class="pay-field">
+        <div class="flbl">Amount to send</div>
+        <div class="fval">
+          <span id="payAmountOut">—</span>
+          <button id="copyAmountBtn" type="button">Copy</button>
+        </div>
+      </div>
+      <div class="pay-field">
+        <div class="flbl">Send to address</div>
+        <div class="fval">
+          <span id="payAddressOut">—</span>
+          <button id="copyAddressBtn" type="button">Copy</button>
+        </div>
+      </div>
+      <div class="pay-status">Send exactly the amount shown, from any wallet or exchange. Your presale allocation is credited once the network confirms your transaction.</div>
+    </div>
   </div>
 </section>
 
@@ -447,7 +488,7 @@
 
     const btn = document.getElementById('buyBtn');
     const originalText = btn.textContent;
-    btn.textContent = 'Creating invoice...';
+    btn.textContent = 'Creating payment...';
     btn.disabled = true;
 
     try {
@@ -463,20 +504,40 @@
       });
       if(!res.ok){
         const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || 'Server error creating invoice');
+        throw new Error(errBody.error || 'Server error creating payment');
       }
       const data = await res.json();
-      if(data.invoice_url){
-        window.location.href = data.invoice_url;
-      } else {
-        throw new Error('No invoice URL returned');
+      if(!data.pay_address){
+        throw new Error('No payment address returned');
       }
+
+      // Show the payment details panel instead of redirecting anywhere
+      document.getElementById('payAmountOut').textContent = data.pay_amount + ' ' + (data.pay_currency || '').toUpperCase();
+      document.getElementById('payAddressOut').textContent = data.pay_address;
+      document.getElementById('payQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(data.pay_address);
+      document.getElementById('payDetails').classList.add('show');
+      document.getElementById('payDetails').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
     } catch (err){
-      alert('Could not start payment. ' + err.message + '\n\n(This button needs the backend proxy at ' + CONFIG.createPaymentEndpoint + ' to be deployed — see api/create-payment.js)');
+      alert('Could not create payment. ' + err.message);
     } finally {
       btn.textContent = originalText;
       btn.disabled = false;
     }
+  });
+
+  function copyToClipboard(text, btnEl){
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btnEl.textContent;
+      btnEl.textContent = 'Copied!';
+      setTimeout(() => { btnEl.textContent = original; }, 1500);
+    });
+  }
+  document.getElementById('copyAmountBtn').addEventListener('click', function(){
+    copyToClipboard(document.getElementById('payAmountOut').textContent, this);
+  });
+  document.getElementById('copyAddressBtn').addEventListener('click', function(){
+    copyToClipboard(document.getElementById('payAddressOut').textContent, this);
   });
 </script>
 
