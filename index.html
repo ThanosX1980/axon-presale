@@ -156,7 +156,7 @@
 
   .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
   .pay-select{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
   }
   .pay-opt{
     border:1px solid var(--line);background:var(--bg-panel-2);border-radius:9px;
@@ -252,7 +252,7 @@
   <div class="wrap">
     <div class="badge"><span class="dot"></span>PRESALE LIVE — Flat price, no stage jumps</div>
     <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
-    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. No hidden stage price hikes. Pay with BNB, BTC, ETH or USDT.</p>
+    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. Pay with BTC, ETH, BNB, USDT, MATIC, or USDC.</p>
 
     <div class="axon-visual">
       <svg viewBox="0 0 640 64" preserveAspectRatio="none">
@@ -302,16 +302,18 @@
 
     <div class="field-label">Pay with</div>
     <div class="pay-select" id="paySelect">
-      <div class="pay-opt active" data-cur="MATIC">MATIC</div>
-      <div class="pay-opt" data-cur="BTC">BTC</div>
-      <div class="pay-opt" data-cur="ETH">ETH</div>
-      <div class="pay-opt" data-cur="USDC">USDC</div>
+      <div class="pay-opt active" data-ticker="btc">BTC</div>
+      <div class="pay-opt" data-ticker="eth">ETH</div>
+      <div class="pay-opt" data-ticker="bnbbsc">BNB</div>
+      <div class="pay-opt" data-ticker="usdterc20">USDT</div>
+      <div class="pay-opt" data-ticker="maticmainnet">MATIC</div>
+      <div class="pay-opt" data-ticker="usdc">USDC</div>
     </div>
 
     <div class="field-label">Amount</div>
     <div class="amount-input">
       <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
-      <span class="cur" id="payCurLabel">BNB</span>
+      <span class="cur" id="payCurLabel">BTC</span>
     </div>
 
     <div class="receive-box">
@@ -388,7 +390,14 @@
     raisedUsd: 142850,
     tokensSold: 913920000,
     softBarDenominatorUsd: 375000,
-    rates: { BNB: 560, BTC: 62000, ETH: 3400, USDT: 1 },
+    rates: {
+      btc: 62000,
+      eth: 3400,
+      bnbbsc: 560,
+      usdterc20: 1,
+      maticmainnet: 0.55,
+      usdc: 1
+    },
     createPaymentEndpoint: "/api/create-payment"
   };
 
@@ -397,14 +406,14 @@
   document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
   document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
 
-  let selectedCur = 'BNB';
+  let selectedTicker = 'btc';
   const payOpts = document.querySelectorAll('.pay-opt');
   payOpts.forEach(opt => {
     opt.addEventListener('click', () => {
       payOpts.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
-      selectedCur = opt.dataset.cur;
-      document.getElementById('payCurLabel').textContent = selectedCur;
+      selectedTicker = opt.dataset.ticker;
+      document.getElementById('payCurLabel').textContent = opt.textContent;
       updateReceiveAmount();
     });
   });
@@ -413,7 +422,7 @@
   const receiveEl = document.getElementById('receiveAmt');
   function updateReceiveAmount(){
     const amt = parseFloat(amountInput.value) || 0;
-    const usdValue = amt * (CONFIG.rates[selectedCur] || 0);
+    const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
     const tokens = usdValue / CONFIG.tokenPriceUsd;
     receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
   }
@@ -430,12 +439,12 @@
     btn.disabled = true;
 
     try {
-      const usdValue = amt * (CONFIG.rates[selectedCur] || 0);
+      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
       const res = await fetch(CONFIG.createPaymentEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pay_currency: selectedCur,
+          pay_currency: selectedTicker,
           price_amount_usd: usdValue,
           order_description: 'AXON ($AXN) presale contribution'
         })
