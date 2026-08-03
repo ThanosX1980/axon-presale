@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXON ($AXN) — Presale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a12;
+    --bg-panel:#12121e;
+    --bg-panel-2:#171726;
+    --line:#26263a;
+    --signal:#8b7fff;
+    --signal-2:#5ee6c8;
+    --pulse:#ff3d71;
+    --text:#eceaf6;
+    --text-dim:#8a89a3;
+    --text-dimmer:#54536b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+
+  .grid-bg{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.25;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 24px;position:relative;z-index:10;
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:0.02em;}
+  .logo .node{
+    width:10px;height:10px;border-radius:50%;background:var(--signal);
+    box-shadow:0 0 12px 2px var(--signal);
+    animation:pulse-node 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse-node{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+  .nav-links{display:flex;gap:28px;font-size:14px;color:var(--text-dim);}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    background:var(--signal);color:#0a0a12;font-weight:600;font-size:14px;
+    padding:10px 18px;border-radius:8px;
+  }
+  @media(max-width:720px){.nav-links{display:none;}}
+
+  .hero{
+    padding:96px 24px 64px;text-align:center;position:relative;z-index:1;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);background:var(--bg-panel);
+    padding:6px 14px;border-radius:999px;font-size:12px;color:var(--text-dim);
+    margin-bottom:28px;
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--signal-2);box-shadow:0 0 8px var(--signal-2);}
+  h1.hero-title{
+    font-size:clamp(36px,7vw,68px);font-weight:700;line-height:1.05;letter-spacing:-0.02em;
+    margin-bottom:20px;
+  }
+  h1.hero-title .grad{
+    background:linear-gradient(90deg,var(--signal),var(--signal-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{
+    max-width:560px;margin:0 auto 40px;color:var(--text-dim);font-size:17px;
+  }
+
+  .axon-visual{
+    max-width:640px;margin:0 auto 48px;height:64px;position:relative;
+  }
+  .axon-visual svg{width:100%;height:100%;overflow:visible;}
+  .axon-line{stroke:var(--line);stroke-width:2;fill:none;}
+  .axon-pulse{
+    fill:var(--signal-2);
+    filter:drop-shadow(0 0 8px var(--signal-2));
+  }
+  .axon-node{fill:var(--bg-panel);stroke:var(--line);stroke-width:1.5;}
+
+  .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    padding:14px 28px;border-radius:9px;font-weight:600;font-size:15px;cursor:pointer;
+    border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--pulse);color:#fff;box-shadow:0 0 0 0 rgba(255,61,113,.5);}
+  .btn-primary:hover{box-shadow:0 6px 24px -4px rgba(255,61,113,.6);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--signal);}
+
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    max-width:960px;margin:0 auto 80px;
+  }
+  .stat{background:var(--bg-panel);padding:22px 16px;text-align:center;}
+  .stat .val{font-size:22px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--signal-2);}
+  .stat .lbl{font-size:12px;color:var(--text-dimmer);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  .section{padding:64px 24px;}
+  .section-head{text-align:center;max-width:520px;margin:0 auto 40px;}
+  .section-head .kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal-2);margin-bottom:10px;}
+  .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
+  .section-head p{color:var(--text-dim);margin-top:10px;}
+
+  .buy-card{
+    max-width:480px;margin:0 auto;
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
+    padding:28px;position:relative;
+  }
+  .presale-bar-wrap{margin-bottom:24px;}
+  .presale-bar-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;}
+  .presale-bar-top .raised{color:var(--signal-2);font-weight:600;font-family:'IBM Plex Mono',monospace;}
+  .presale-bar{
+    height:12px;border-radius:999px;background:var(--bg-panel-2);border:1px solid var(--line);
+    overflow:hidden;position:relative;
+  }
+  .presale-bar-fill{
+    height:100%;border-radius:999px;
+    background:linear-gradient(90deg,var(--signal),var(--signal-2));
+    position:relative;
+    width:var(--fill,38%);
+    transition:width .6s ease;
+  }
+  .presale-bar-fill::after{
+    content:'';position:absolute;top:0;right:0;bottom:0;width:24px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));
+    animation:sweep 2s linear infinite;
+  }
+  @keyframes sweep{0%{transform:translateX(0);opacity:0;}30%{opacity:1;}100%{transform:translateX(30px);opacity:0;}}
+
+  .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-top:10px;}
+  .price-row .mono{color:var(--text);}
+
+  .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
+  .pay-select{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;
+  }
+  .pay-opt{
+    border:1px solid var(--line);background:var(--bg-panel-2);border-radius:9px;
+    padding:10px 4px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
+    color:var(--text-dim);transition:all .15s ease;
+  }
+  .pay-opt.active{border-color:var(--signal);color:var(--signal-2);background:rgba(139,127,255,.08);}
+
+  .amount-input{
+    display:flex;align-items:center;border:1px solid var(--line);background:var(--bg-panel-2);
+    border-radius:10px;padding:14px 16px;margin-top:4px;
+  }
+  .amount-input input{
+    flex:1;background:transparent;border:none;outline:none;color:var(--text);
+    font-family:'IBM Plex Mono',monospace;font-size:18px;
+  }
+  .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;}
+
+  .receive-box{
+    margin-top:16px;padding:16px;border-radius:10px;
+    background:rgba(94,230,200,.06);border:1px solid rgba(94,230,200,.25);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .receive-box .lbl{font-size:12px;color:var(--text-dim);}
+  .receive-box .amt{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;color:var(--signal-2);}
+
+  .buy-btn{
+    width:100%;margin-top:20px;padding:16px;border:none;border-radius:10px;
+    background:var(--pulse);color:#fff;font-weight:700;font-size:16px;cursor:pointer;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
+  .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
+
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
+  .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
+  .step .num{
+    font-family:'IBM Plex Mono',monospace;color:var(--signal-2);font-size:13px;
+    border:1px solid var(--line);width:28px;height:28px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+  }
+  .step h3{font-size:16px;margin-bottom:6px;}
+  .step p{font-size:13.5px;color:var(--text-dim);}
+  @media(max-width:800px){.steps{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.steps{grid-template-columns:1fr;}}
+
+  .tokenomics{
+    display:flex;gap:40px;max-width:900px;margin:0 auto;align-items:center;flex-wrap:wrap;justify-content:center;
+  }
+  .tok-list{flex:1;min-width:260px;display:flex;flex-direction:column;gap:14px;}
+  .tok-row{display:flex;align-items:center;gap:12px;font-size:14px;}
+  .tok-swatch{width:10px;height:10px;border-radius:2px;}
+  .tok-row .pct{margin-left:auto;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);}
+
+  .faq{max-width:720px;margin:0 auto;}
+  details{
+    border-bottom:1px solid var(--line);padding:18px 4px;
+  }
+  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:'+';color:var(--text-dim);font-size:20px;}
+  details[open] summary::after{content:'–';}
+  details p{color:var(--text-dim);font-size:14px;margin-top:10px;}
+
+  footer{
+    border-top:1px solid var(--line);padding:36px 24px;text-align:center;
+    color:var(--text-dimmer);font-size:12.5px;
+  }
+  footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
+
+  .placeholder-flag{
+    display:inline-block;background:rgba(255,61,113,.12);color:var(--pulse);
+    font-size:10.5px;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="logo"><span class="node"></span>AXON</div>
+  <div class="nav-links">
+    <a href="#buy">Presale</a>
+    <a href="#how">How to Buy</a>
+    <a href="#tokenomics">Tokenomics</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a href="#buy" class="nav-cta">Buy $AXN</a>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span>PRESALE LIVE — Flat price, no stage jumps</div>
+    <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
+    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. No hidden stage price hikes. Pay with BNB, BTC, ETH or USDT.</p>
+
+    <div class="axon-visual">
+      <svg viewBox="0 0 640 64" preserveAspectRatio="none">
+        <path class="axon-line" d="M 20 32 Q 160 8, 320 32 T 620 32"></path>
+        <circle class="axon-node" cx="20" cy="32" r="6"></circle>
+        <circle class="axon-node" cx="320" cy="32" r="6"></circle>
+        <circle class="axon-node" cx="620" cy="32" r="6"></circle>
+        <circle class="axon-pulse" r="5">
+          <animateMotion dur="3.2s" repeatCount="indefinite"
+            path="M 20 32 Q 160 8, 320 32 T 620 32" />
+        </circle>
+      </svg>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="#buy" class="btn btn-primary">Join the presale</a>
+      <a href="#how" class="btn btn-ghost">How it works</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><div class="val" id="statRaised">$142,850</div><div class="lbl">Raised</div></div>
+    <div class="stat"><div class="val" id="statSold">913.9M</div><div class="lbl">$AXN Sold</div></div>
+    <div class="stat"><div class="val">$0.00015625</div><div class="lbl">Price / Token</div></div>
+    <div class="stat"><div class="val" id="statHolders">1,204</div><div class="lbl">Participants</div></div>
+  </div>
+</div>
+
+<section class="section" id="buy">
+  <div class="section-head">
+    <div class="kicker">Presale</div>
+    <h2>Buy $AXN now</h2>
+    <p>Flat presale price — the earlier you buy, the more you hold before listing.</p>
+  </div>
+
+  <div class="buy-card">
+    <div class="presale-bar-wrap">
+      <div class="presale-bar-top">
+        <span>Raised so far</span>
+        <span class="raised mono" id="barRaisedLabel">$142,850</span>
+      </div>
+      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:38%"></div></div>
+      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">913,920,000 $AXN</span></div>
+    </div>
+
+    <div class="field-label">Pay with</div>
+    <div class="pay-select" id="paySelect">
+      <div class="pay-opt active" data-cur="BNB">BNB</div>
+      <div class="pay-opt" data-cur="BTC">BTC</div>
+      <div class="pay-opt" data-cur="ETH">ETH</div>
+      <div class="pay-opt" data-cur="USDT">USDT</div>
+    </div>
+
+    <div class="field-label">Amount</div>
+    <div class="amount-input">
+      <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
+      <span class="cur" id="payCurLabel">BNB</span>
+    </div>
+
+    <div class="receive-box">
+      <span class="lbl">You'll receive at presale end</span>
+      <span class="amt" id="receiveAmt">0 $AXN</span>
+    </div>
+
+    <button class="buy-btn" id="buyBtn">Buy $AXN</button>
+    <div class="buy-note">Payments are processed via NOWPayments. You'll be redirected to a secure hosted invoice to complete payment.</div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="section-head">
+    <div class="kicker">Process</div>
+    <h2>How to buy</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h3>Choose amount</h3><p>Pick your currency and enter how much you want to contribute.</p></div>
+    <div class="step"><div class="num">02</div><h3>Confirm invoice</h3><p>You're redirected to a secure NOWPayments invoice for your selected coin.</p></div>
+    <div class="step"><div class="num">03</div><h3>Send payment</h3><p>Pay from any wallet or exchange. Confirmations are tracked automatically.</p></div>
+    <div class="step"><div class="num">04</div><h3>Claim $AXN</h3><p>Tokens are distributed to your submitted wallet after presale close.</p></div>
+  </div>
+</section>
+
+<section class="section" id="tokenomics">
+  <div class="section-head">
+    <div class="kicker">Tokenomics</div>
+    <h2>Supply breakdown</h2>
+    <p>Placeholder allocation<span class="placeholder-flag">EDIT ME</span> — replace with your real figures before launch.</p>
+  </div>
+  <div class="tokenomics">
+    <div class="tok-list">
+      <div class="tok-row"><span class="tok-swatch" style="background:#8b7fff"></span>Presale <span class="pct">40%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#5ee6c8"></span>Liquidity <span class="pct">25%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#ff3d71"></span>Team (locked) <span class="pct">15%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#54536b"></span>Marketing <span class="pct">10%</span></div>
+      <div class="tok-row"><span class="tok-swatch" style="background:#26263a"></span>Ecosystem/Reserve <span class="pct">10%</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="section-head">
+    <div class="kicker">FAQ</div>
+    <h2>Common questions</h2>
+  </div>
+  <div class="faq">
+    <details open>
+      <summary>How is my "tokens received" amount calculated?</summary>
+      <p>At the flat presale price of $0.00015625 per $AXN, your contribution amount (converted to USD at time of payment) is divided by the token price to estimate your allocation.</p>
+    </details>
+    <details>
+      <summary>When do I receive my tokens?</summary>
+      <p>Tokens are distributed to the wallet address you submit, after the presale ends and the claim portal opens. <span class="placeholder-flag">EDIT ME — confirm your real distribution timeline</span></p>
+    </details>
+    <details>
+      <summary>Is this financial advice?</summary>
+      <p>No. This page is for informational purposes only. Cryptocurrency presales carry significant risk, including total loss of funds. Do your own research.</p>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="disclaimer">
+    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to lose, and verify all project details independently before contributing.
+  </div>
+  <div>© 2026 AXON. All rights reserved.</div>
+</footer>
+
+<script>
+  const CONFIG = {
+    tokenPriceUsd: 0.00015625,
+    raisedUsd: 142850,
+    tokensSold: 913920000,
+    softBarDenominatorUsd: 375000,
+    rates: { BNB: 560, BTC: 62000, ETH: 3400, USDT: 1 },
+    createPaymentEndpoint: "/api/create-payment"
+  };
+
+  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
+  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+
+  let selectedCur = 'BNB';
+  const payOpts = document.querySelectorAll('.pay-opt');
+  payOpts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      payOpts.forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      selectedCur = opt.dataset.cur;
+      document.getElementById('payCurLabel').textContent = selectedCur;
+      updateReceiveAmount();
+    });
+  });
+
+  const amountInput = document.getElementById('payAmount');
+  const receiveEl = document.getElementById('receiveAmt');
+  function updateReceiveAmount(){
+    const amt = parseFloat(amountInput.value) || 0;
+    const usdValue = amt * (CONFIG.rates[selectedCur] || 0);
+    const tokens = usdValue / CONFIG.tokenPriceUsd;
+    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
+  }
+  amountInput.addEventListener('input', updateReceiveAmount);
+  updateReceiveAmount();
+
+  document.getElementById('buyBtn').addEventListener('click', async () => {
+    const amt = parseFloat(amountInput.value);
+    if(!amt || amt <= 0){ alert('Enter an amount first.'); return; }
+
+    const btn = document.getElementById('buyBtn');
+    const originalText = btn.textContent;
+    btn.textContent = 'Creating invoice...';
+    btn.disabled = true;
+
+    try {
+      const usdValue = amt * (CONFIG.rates[selectedCur] || 0);
+      const res = await fetch(CONFIG.createPaymentEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pay_currency: selectedCur,
+          price_amount_usd: usdValue,
+          order_description: 'AXON ($AXN) presale contribution'
+        })
+      });
+      if(!res.ok){
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || 'Server error creating invoice');
+      }
+      const data = await res.json();
+      if(data.invoice_url){
+        window.location.href = data.invoice_url;
+      } else {
+        throw new Error('No invoice URL returned');
+      }
+    } catch (err){
+      alert('Could not start payment. ' + err.message + '\n\n(This button needs the backend proxy at ' + CONFIG.createPaymentEndpoint + ' to be deployed — see api/create-payment.js)');
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
