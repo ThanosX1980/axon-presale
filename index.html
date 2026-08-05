@@ -395,7 +395,7 @@
 
 <script>
   // ===================================================================
-  // CONFIG — edit these values directly.
+  // CONFIG — edit these values directly to update your price/raised amounts.
   // ===================================================================
   const CONFIG = {
     tokenPriceUsd: 0.001875,
@@ -561,7 +561,6 @@
 
   // ===================================================================
   // CONSOLIDATED BUY FLOW
-  // Connects wallet -> Creates Invoice -> Switches Network -> Sends Tx
   // ===================================================================
   document.getElementById('buyBtn').addEventListener('click', async () => {
     const amt = parseFloat(amountInput.value);
@@ -582,7 +581,7 @@
         if (!account) return; 
       }
 
-      // 2. Create Payment Invoice
+      // 2. Create Payment Invoice via your Vercel Backend Endpoint
       buyBtn.textContent = 'Generating Invoice...';
       buyBtn.disabled = true;
 
@@ -606,7 +605,6 @@
 
       const data = await res.json();
       
-      // Strict fallback prioritization for backend values
       const payAddress = data.pay_address || data.depositAddress || data.address;
       const exactPayAmount = data.pay_amount ?? data.amount ?? amt;
 
