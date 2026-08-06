@@ -462,6 +462,14 @@
 
   async function connectWallet() {
     if (!window.ethereum) {
+      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
+      const metaMaskAppUrl = `https://metamask.app.link/dapp/${currentUrl}`;
+      
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.location.href = metaMaskAppUrl;
+        return null;
+      }
+      
       alert("No Web3 wallet detected. Please open this page inside a crypto wallet app.");
       return null;
     }
