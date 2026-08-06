@@ -203,6 +203,28 @@
   .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
   .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
 
+  /* Wallet Modal Styles */
+  .wallet-modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,10,18,0.8); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .wallet-modal-overlay.active { display: flex; }
+  .wallet-modal {
+    background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
+    width: 100%; max-width: 360px; padding: 24px; text-align: center;
+  }
+  .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
+  .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
+  .wallet-option {
+    background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
+  }
+  .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
+  .wallet-modal-close {
+    background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
+  }
+
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
   .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
   .step .num{
@@ -243,6 +265,19 @@
 <body>
 
 <div class="grid-bg"></div>
+
+<!-- Wallet Selection Modal -->
+<div class="wallet-modal-overlay" id="walletModal">
+  <div class="wallet-modal">
+    <h3>Select Wallet</h3>
+    <div class="wallet-option-list">
+      <div class="wallet-option" data-wallet="metamask"><span>MetaMask / Injected</span> →</div>
+      <div class="wallet-option" data-wallet="trust"><span>Trust Wallet</span> →</div>
+      <div class="wallet-option" data-wallet="coinbase"><span>Coinbase Wallet</span> →</div>
+    </div>
+    <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
+  </div>
+</div>
 
 <nav>
   <div class="logo"><span class="node"></span>AXON</div>
@@ -445,6 +480,8 @@
 
   let connectedAccount = null;
   const connectBtn = document.getElementById('connectWalletBtn');
+  const walletModal = document.getElementById('walletModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
 
   function updateWalletUI(account) {
     connectedAccount = account;
@@ -460,21 +497,48 @@
     }
   }
 
-  async function connectWallet() {
-    if (!window.ethereum) {
+  // Open modal on click instead of instant auto-alert error
+  connectBtn.addEventListener('click', () => {
+    walletModal.classList.add('active');
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    walletModal.classList.remove('active');
+  });
+
+  // Handle choice of specific wallet selection
+  document.querySelectorAll('.wallet-option').forEach(option => {
+    option.addEventListener('click', async () => {
+      const walletType = option.dataset.wallet;
+      walletModal.classList.remove('active');
+      await connectWallet(walletType);
+    });
+  });
+
+  async function connectWallet(walletType = 'metamask') {
+    let provider = window.ethereum;
+
+    // Handle target mobile deep linking options if selected wallet isn't injected directly
+    if (!provider) {
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-      const metaMaskAppUrl = `https://metamask.app.link/dapp/${currentUrl}`;
-      
       if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.location.href = metaMaskAppUrl;
-        return null;
+        if (walletType === 'trust') {
+          window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${currentUrl}`;
+          return null;
+        } else if (walletType === 'coinbase') {
+          window.location.href = `https://go.cb-w.com/dapp?url=https://${currentUrl}`;
+          return null;
+        } else {
+          window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
+          return null;
+        }
       }
-      
-      alert("No Web3 wallet detected. Please open this page inside a crypto wallet app.");
+      alert("No Web3 wallet detected. Please install a browser extension wallet or open inside a crypto wallet app.");
       return null;
     }
+
     try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       updateWalletUI(accounts[0]);
       return accounts[0];
     } catch (err) {
@@ -482,8 +546,6 @@
       return null;
     }
   }
-
-  connectBtn.addEventListener('click', connectWallet);
 
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
