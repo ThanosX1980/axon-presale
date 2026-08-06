@@ -27,6 +27,7 @@
     font-family:'Inter',sans-serif;
     line-height:1.5;
     overflow-x:hidden;
+    position:relative;
   }
   h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
   .mono{font-family:'IBM Plex Mono',monospace;}
@@ -40,6 +41,43 @@
     background-size:64px 64px;
     opacity:0.25;
     mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* Floating Background AXN Tokens Container */
+  .floating-tokens-container {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .floating-token {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #1a1a2e 0%, #0d0d1a 70%, #05050a 100%);
+    border: 1.5px solid rgba(139, 127, 255, 0.4);
+    box-shadow: 0 0 15px rgba(94, 230, 200, 0.25), inset 0 0 10px rgba(139, 127, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: floatToken var(--float-duration, 15s) ease-in-out infinite alternate;
+    opacity: 0.45;
+  }
+  .floating-token svg {
+    width: 70%;
+    height: 70%;
+    filter: drop-shadow(0 0 4px rgba(94, 230, 200, 0.6));
+  }
+  @keyframes floatToken {
+    0% {
+      transform: translateY(0px) translateX(0px) rotate(0deg) scale(var(--scale, 1));
+    }
+    50% {
+      transform: translateY(var(--move-y, -60px)) translateX(var(--move-x, 40px)) rotate(180deg) scale(var(--scale, 1));
+    }
+    100% {
+      transform: translateY(var(--move-y-2, 40px)) translateX(var(--move-x-2, -50px)) rotate(360deg) scale(var(--scale, 1));
+    }
   }
 
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
@@ -112,14 +150,14 @@
   .stats{
     display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
     background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
-    max-width:960px;margin:0 auto 80px;
+    max-width:960px;margin:0 auto 80px;position:relative;z-index:1;
   }
   .stat{background:var(--bg-panel);padding:22px 16px;text-align:center;}
   .stat .val{font-size:22px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--signal-2);}
   .stat .lbl{font-size:12px;color:var(--text-dimmer);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;}
   @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
 
-  .section{padding:64px 24px;}
+  .section{padding:64px 24px;position:relative;z-index:1;}
   .section-head{text-align:center;max-width:520px;margin:0 auto 40px;}
   .section-head .kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal-2);margin-bottom:10px;}
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
@@ -257,7 +295,7 @@
 
   footer{
     border-top:1px solid var(--line);padding:36px 24px;text-align:center;
-    color:var(--text-dimmer);font-size:12.5px;
+    color:var(--text-dimmer);font-size:12.5px;position:relative;z-index:1;
   }
   footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
 </style>
@@ -265,6 +303,9 @@
 <body>
 
 <div class="grid-bg"></div>
+
+<!-- Animated Glowing Floating AXN Tokens Background -->
+<div class="floating-tokens-container" id="floatingTokensContainer"></div>
 
 <!-- Wallet Selection Modal -->
 <div class="wallet-modal-overlay" id="walletModal">
@@ -439,6 +480,69 @@
 <script>
   console.log("AXON Script initializing...");
 
+  // Generate floating animated glowing AXN tokens based on user's custom badge design
+  (function initFloatingTokens() {
+    const container = document.getElementById('floatingTokensContainer');
+    if (!container) return;
+    const tokenCount = 14; // Number of floating tokens across the background
+
+    // SVG graphic modeled directly after your uploaded token image
+    const tokenSvgContent = `
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="url(#tokenRingGrad)" stroke-width="4"/>
+        <circle cx="50" cy="22" r="3" fill="#5ee6c8" filter="drop-shadow(0 0 4px #5ee6c8)"/>
+        <!-- Central Axon nodes / lines -->
+        <path d="M 36 48 L 50 34 L 64 48" fill="none" stroke="#5ee6c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="54" r="3.5" fill="#ffffff" stroke="#8b7fff" stroke-width="1.5"/>
+        <path d="M 50 54 L 41 68 M 50 54 L 59 68" fill="none" stroke="#8b7fff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="41" cy="68" r="2.5" fill="#8b7fff"/>
+        <circle cx="59" cy="68" r="2.5" fill="#5ee6c8"/>
+        <path d="M 37 48 L 30 48 M 63 48 L 70 48" fill="none" stroke="#5ee6c8" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="30" cy="48" r="2" fill="#5ee6c8"/>
+        <circle cx="70" cy="48" r="2" fill="#5ee6c8"/>
+        <defs>
+          <linearGradient id="tokenRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8b7fff" />
+            <stop offset="100%" stop-color="#5ee6c8" />
+          </linearGradient>
+        </defs>
+      </svg>
+    `;
+
+    for (let i = 0; i < tokenCount; i++) {
+      const el = document.createElement('div');
+      el.className = 'floating-token';
+      el.innerHTML = tokenSvgContent;
+
+      // Random positioning and animation parameters
+      const size = Math.floor(Math.random() * 45) + 35; // Size between 35px and 80px
+      const posX = Math.random() * 100; // vw percentage
+      const posY = Math.random() * 100; // vh percentage
+      const duration = (Math.random() * 12 + 10).toFixed(1); // 10s to 22s float duration
+      const delay = (Math.random() * 5).toFixed(1);
+      const scale = (Math.random() * 0.4 + 0.8).toFixed(2);
+      
+      const moveX = (Math.random() * 120 - 60).toFixed(0);
+      const moveY = (Math.random() * 120 - 60).toFixed(0);
+      const moveX2 = (Math.random() * 120 - 60).toFixed(0);
+      const moveY2 = (Math.random() * 120 - 60).toFixed(0);
+
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+      el.style.left = `${posX}%`;
+      el.style.top = `${posY}%`;
+      el.style.setProperty('--float-duration', `${duration}s`);
+      el.style.animationDelay = `${delay}s`;
+      el.style.setProperty('--scale', scale);
+      el.style.setProperty('--move-x', `${moveX}px`);
+      el.style.setProperty('--move-y', `${moveY}px`);
+      el.style.setProperty('--move-x-2', `${moveX2}px`);
+      el.style.setProperty('--move-y-2', `${moveY2}px`);
+
+      container.appendChild(el);
+    }
+  })();
+
   const CONFIG = {
     tokenPriceUsd: 0.001875,
     raisedUsd: 87635,          
@@ -505,7 +609,6 @@
     }
   }
 
-  // Open modal on click instead of instant auto-alert error
   connectBtn.addEventListener('click', () => {
     walletModal.classList.add('active');
   });
@@ -514,7 +617,6 @@
     walletModal.classList.remove('active');
   });
 
-  // Handle choice of specific wallet selection
   document.querySelectorAll('.wallet-option').forEach(option => {
     option.addEventListener('click', async () => {
       const walletType = option.dataset.wallet;
@@ -526,7 +628,6 @@
   async function connectWallet(walletType = 'metamask') {
     let provider = window.ethereum;
 
-    // Handle target mobile deep linking options if selected wallet isn't injected directly
     if (!provider) {
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
       if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
