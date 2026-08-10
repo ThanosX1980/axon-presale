@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AXON ($AXN) — Presale</title>
+<title>AXON — Autonomous AI Agent Settlement & Trust Layer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -92,8 +92,10 @@
   .nav-links a:hover{color:var(--text);}
   .nav-cta{
     background:var(--signal);color:#0a0a12;font-weight:600;font-size:14px;
-    padding:10px 18px;border-radius:8px;
+    padding:10px 18px;border-radius:8px;cursor:pointer;
+    border:none;transition:background 0.2s ease;
   }
+  .nav-cta:hover{background:var(--signal-2);}
   @media(max-width:720px){.nav-links{display:none;}}
 
   .hero{
@@ -133,21 +135,23 @@
   .btn{
     padding:14px 28px;border-radius:99px;font-weight:600;font-size:15px;cursor:pointer;
     border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
-    position: relative; z-index: 5;
+    position: relative; z-index: 5; display:inline-flex; align-items:center; gap:8px;
   }
   .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:var(--pulse);color:#fff;box-shadow:0 0 0 0 rgba(255,61,113,.5);}
   .btn-primary:hover{box-shadow:0 6px 24px -4px rgba(255,61,113,.6);}
+  .btn-secondary{background:var(--bg-panel);border-color:var(--line);color:var(--text);}
+  .btn-secondary:hover{border-color:var(--signal);}
 
   .stats{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
     background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
-    max-width:960px;margin:0 auto 80px;position:relative;z-index:1;
+    max-width:800px;margin:0 auto 80px;position:relative;z-index:1;
   }
   .stat{background:var(--bg-panel);padding:22px 16px;text-align:center;}
   .stat .val{font-size:22px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--signal-2);}
   .stat .lbl{font-size:12px;color:var(--text-dimmer);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;}
-  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:640px){.stats{grid-template-columns:1fr;}}
 
   .section{padding:64px 24px;position:relative;z-index:1;}
   .section-head{text-align:center;max-width:520px;margin:0 auto 40px;}
@@ -155,182 +159,125 @@
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
   .section-head p{color:var(--text-dim);margin-top:10px;}
 
-  /* Presale Buy Card */
-  .buy-card{
-    max-width:480px;margin:0 auto 64px;
-    background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
-    padding:28px;position:relative;
-    z-index: 5;
-  }
-  .presale-bar-wrap{margin-bottom:24px;}
-  .presale-bar-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;}
-  .presale-bar-top .raised{color:var(--signal-2);font-weight:600;font-family:'IBM Plex Mono',monospace;}
-  .presale-bar{
-    height:12px;border-radius:999px;background:var(--bg-panel-2);border:1px solid var(--line);
-    overflow:hidden;position:relative;
-  }
-  .presale-bar-fill{
-    height:100%;border-radius:999px;
-    background:linear-gradient(90deg,var(--signal),var(--signal-2));
-    position:relative;
-    width:var(--fill,0%);
-    transition:width .6s ease;
-  }
-  .presale-bar-fill::after{
-    content:'';position:absolute;top:0;right:0;bottom:0;width:24px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));
-    animation:sweep 2s linear infinite;
-  }
-  @keyframes sweep{0%{transform:translateX(0);opacity:0;}30%{opacity:1;}100%{transform:translateX(30px);opacity:0;}}
-
-  .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-top:10px;}
-  .price-row .mono{color:var(--text);}
-
-  .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
-  .pay-select{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
-    position: relative; z-index: 10;
-  }
-  .pay-opt{
-    border:1px solid var(--line);background:var(--bg-panel-2);border-radius:99px;
-    padding:12px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
-    color:var(--text-dim);transition:all .15s ease;
-    user-select:none;
-    -webkit-user-select:none;
-  }
-  .pay-opt.active{border-color:var(--signal);color:var(--signal-2);background:rgba(139,127,255,.08);}
-
-  .amount-input{
-    display:flex;align-items:center;border:1px solid var(--line);background:var(--bg-panel-2);
-    border-radius:10px;padding:14px 16px;margin-top:4px;
-    position: relative; z-index: 10;
-  }
-  .amount-input input{
-    flex:1;background:transparent;border:none;outline:none;color:var(--text);
-    font-family:'IBM Plex Mono',monospace;font-size:18px;
-    width: 100%;
-  }
-  .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;white-space:nowrap;margin-left:8px;}
-
-  .receive-box{
-    margin-top:16px;padding:16px;border-radius:10px;
-    background:rgba(94,230,200,.06);border:1px solid rgba(94,230,200,.25);
-    display:flex;justify-content:space-between;align-items:center;
-  }
-  .receive-box .lbl{font-size:12px;color:var(--text-dim);}
-  .receive-box .amt{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;color:var(--signal-2);}
-
-  .buy-btn{
-    width:100%;margin-top:20px;padding:16px;border:none;border-radius:10px;
-    background:var(--pulse);color:#fff;font-weight:700;font-size:16px;cursor:pointer;
-    transition:box-shadow .15s ease, transform .15s ease;
-    position: relative; z-index: 10;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
-  .buy-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-  .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
-
-  .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;position:relative;z-index:10;}
-  .wallet-btn{
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:99px;
-    padding:12px 20px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
-    display:inline-flex;align-items:center;gap:8px;
-    position: relative; z-index: 10;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .wallet-btn:hover{border-color:var(--signal);}
-  .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
-  .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
-  .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
-
-  /* Presale Stages Grid Styles */
-  .stages-grid {
+  .architecture-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     max-width: 1000px;
     margin: 0 auto;
   }
-  .stage-card {
+  .arch-card {
     background: var(--bg-panel);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 14px;
-    text-align: center;
+    border-radius: 14px;
+    padding: 28px 22px;
     position: relative;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease;
   }
-  .stage-card.active {
-    border-color: var(--signal-2);
-    box-shadow: 0 0 16px rgba(94, 230, 200, 0.15);
-    background: radial-gradient(circle at top, rgba(94, 230, 200, 0.08) 0%, var(--bg-panel) 70%);
-  }
-  .stage-card.completed {
-    border-color: rgba(139, 127, 255, 0.3);
-    opacity: 0.75;
-  }
-  .stage-num {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
-  .stage-card.active .stage-num { color: var(--signal-2); }
-  .stage-price {
+  .arch-card:hover { border-color: var(--signal); }
+  .arch-num {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 16px;
-    font-weight: 600;
+    color: var(--signal-2);
+    font-size: 13px;
+    border: 1px solid var(--line);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    background: var(--bg-panel-2);
+  }
+  .arch-card h3 { font-size: 18px; margin-bottom: 10px; font-weight: 600; }
+  .arch-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+  @media(max-width:800px){.architecture-grid{grid-template-columns:1fr;}}
+
+  .sdk-section {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .sdk-header {
+    background: var(--bg-panel-2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+  .sdk-tabs { display: flex; gap: 8px; }
+  .sdk-tab {
+    background: none; border: none; color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+    padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  }
+  .sdk-tab.active { background: var(--signal); color: #0a0a12; font-weight: 600; }
+  .sdk-body {
+    padding: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13.5px;
+    color: #a9fef1;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  .sdk-code-pane { display: none; }
+  .sdk-code-pane.active { display: block; }
+  .code-comment { color: var(--text-dimmer); }
+  .code-keyword { color: var(--signal); }
+  .code-string { color: #f1fa8c; }
+
+  .terminal-box {
+    max-width: 900px;
+    margin: 40px auto 0;
+    background: #05050a;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .terminal-title {
+    font-size: 12px;
+    color: var(--text-dimmer);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .terminal-output {
+    font-size: 13px;
+    color: var(--signal-2);
+    min-height: 80px;
+    max-height: 160px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  .terminal-line { margin-bottom: 6px; }
+  .terminal-input-row { display: flex; gap: 10px; }
+  .terminal-input {
+    flex: 1;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 14px;
     color: var(--text);
-    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    outline: none;
   }
-  .stage-status {
-    display: inline-block;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 99px;
+  .terminal-input:focus { border-color: var(--signal); }
+  .terminal-btn {
+    background: var(--signal);
+    color: #0a0a12;
+    border: none;
+    padding: 0 20px;
+    border-radius: 6px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .stage-card.completed .stage-status { background: rgba(139, 127, 255, 0.15); color: var(--signal); }
-  .stage-card.active .stage-status { background: rgba(94, 230, 200, 0.2); color: var(--signal-2); }
-  .stage-card.upcoming .stage-status { background: var(--bg-panel-2); color: var(--text-dimmer); }
-
-  @media(max-width:900px){ .stages-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media(max-width:480px){ .stages-grid { grid-template-columns: 1fr; } }
-
-  /* Wallet Modal Styles */
-  .wallet-modal-overlay {
-    position: fixed; inset: 0; background: rgba(10,10,18,0.85); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 999999;
-  }
-  .wallet-modal-overlay.active { display: flex; }
-  .wallet-modal {
-    background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
-    width: 90%; max-width: 360px; padding: 24px; text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    position: relative; z-index: 1000000;
-  }
-  .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
-  .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
-  .wallet-option {
-    background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
-    padding: 14px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
-  .wallet-modal-close {
-    background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
-    padding: 8px;
-    user-select: none;
-    -webkit-user-select: none;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
@@ -344,14 +291,6 @@
   .step p{font-size:13.5px;color:var(--text-dim);}
   @media(max-width:800px){.steps{grid-template-columns:1fr 1fr;}}
   @media(max-width:520px){.steps{grid-template-columns:1fr;}}
-
-  .tokenomics{
-    display:flex;gap:40px;max-width:900px;margin:0 auto;align-items:center;flex-wrap:wrap;justify-content:center;
-  }
-  .tok-list{flex:1;min-width:260px;display:flex;flex-direction:column;gap:14px;}
-  .tok-row{display:flex;align-items:center;gap:12px;font-size:14px;}
-  .tok-swatch{width:10px;height:10px;border-radius:2px;}
-  .tok-row .pct{margin-left:auto;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);}
 
   .faq{max-width:720px;margin:0 auto;}
   details{
@@ -368,6 +307,32 @@
     color:var(--text-dimmer);font-size:12.5px;position:relative;z-index:1;
   }
   footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
+
+  /* Modal styling */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(5,5,10,0.8);
+    backdrop-filter: blur(5px); z-index: 100; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-card {
+    background: var(--bg-panel); border: 1px solid var(--line);
+    border-radius: 16px; width: 100%; max-width: 480px; padding: 32px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px; background: none;
+    border: none; color: var(--text-dim); font-size: 20px; cursor: pointer;
+  }
+  .modal-card h3 { font-size: 22px; margin-bottom: 8px; }
+  .modal-card p { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+  .wallet-option {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: var(--bg-panel-2); border: 1px solid var(--line);
+    border-radius: 10px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s;
+    font-weight: 500;
+  }
+  .wallet-option:hover { border-color: var(--signal); }
 </style>
 </head>
 <body>
@@ -375,36 +340,22 @@
 <div class="grid-bg"></div>
 <div class="floating-tokens-container" id="floatingTokensContainer"></div>
 
-<!-- Wallet Selection Modal -->
-<div class="wallet-modal-overlay" id="walletModal">
-  <div class="wallet-modal" id="walletModalInner">
-    <h3>Select Wallet</h3>
-    <div class="wallet-option-list">
-      <div class="wallet-option" data-wallet="metamask" id="optMetamask"><span>MetaMask / Injected</span> →</div>
-      <div class="wallet-option" data-wallet="trust" id="optTrust"><span>Trust Wallet</span> →</div>
-      <div class="wallet-option" data-wallet="coinbase" id="optCoinbase"><span>Coinbase Wallet</span> →</div>
-    </div>
-    <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
-  </div>
-</div>
-
 <nav>
   <div class="logo"><span class="node"></span>AXON</div>
   <div class="nav-links">
-    <a href="#buy">Presale</a>
-    <a href="#stages">Stages</a>
-    <a href="#how">How to Buy</a>
-    <a href="#tokenomics">Tokenomics</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#sdk">Developer SDK</a>
+    <a href="#workflow">Workflow</a>
     <a href="#faq">FAQ</a>
   </div>
-  <a href="#buy" class="nav-cta">Buy $AXN</a>
+  <button class="nav-cta" id="connectWalletBtn">Connect Agent Node</button>
 </nav>
 
 <section class="hero">
   <div class="wrap">
-    <div class="badge"><span class="dot"></span>PRESALE LIVE — Softcap: $150K | Hardcap: $1.5M</div>
+    <div class="badge"><span class="dot"></span>CORE PROTOCOL ARCHITECTURE ACTIVE</div>
     <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
-    <p class="hero-sub">AXON ($AXN) presale is now open across 10 dynamic pricing rounds. Pay with ETH, BNB, USDT, MATIC, or USDC.</p>
+    <p class="hero-sub">AXON provides the foundational settlement and trust layer for autonomous AI agents, enabling secure machine-to-machine commerce, execution verification, and protocol-level coordination.</p>
 
     <div class="axon-visual">
       <svg viewBox="0 0 640 64" preserveAspectRatio="none">
@@ -420,142 +371,232 @@
     </div>
 
     <div class="hero-ctas">
-      <a href="#buy" class="btn btn-primary">Join the presale</a>
+      <a href="#architecture" class="btn btn-primary">Discover Core Primitives</a>
+      <a href="#sdk" class="btn btn-secondary">View SDK Docs</a>
     </div>
   </div>
 </section>
 
 <div class="wrap">
   <div class="stats">
-    <div class="stat"><div class="val" id="statRaised">$109,224</div><div class="lbl">Raised</div></div>
-    <div class="stat"><div class="val" id="statRound">Round 1</div><div class="lbl">Current Stage</div></div>
-    <div class="stat"><div class="val" id="statPrice">$0.001875</div><div class="lbl">Current Price</div></div>
-    <div class="stat"><div class="val" id="statHolders">248</div><div class="lbl">Participants</div></div>
+    <div class="stat"><div class="val">Zero-Trust</div><div class="lbl">Agent Security</div></div>
+    <div class="stat"><div class="val">Atomic</div><div class="lbl">State Settlement</div></div>
+    <div class="stat"><div class="val">Autonomous</div><div class="lbl">M2M Commerce</div></div>
   </div>
 </div>
 
-<section class="section" id="buy">
+<section class="section" id="architecture">
   <div class="section-head">
-    <div class="kicker">Presale</div>
-    <h2>Buy $AXN now</h2>
-    <p>Prices increase slightly by $0.0005 each round across 10 stages up to the $1.5M hardcap.</p>
+    <div class="kicker">Core Architecture</div>
+    <h2>The AXON Protocol Layer</h2>
+    <p>Engineered from the ground up to support decentralized, high-frequency coordination among autonomous machine actors.</p>
   </div>
 
-  <div class="buy-card">
-    <div class="wallet-connect-row">
-      <button class="wallet-btn" id="connectWalletBtn" type="button"><span class="wdot"></span>Connect Wallet</button>
+  <div class="architecture-grid">
+    <div class="arch-card">
+      <div class="arch-num">01</div>
+      <h3>Trust & Verification</h3>
+      <p>Cryptographic proof mechanisms validate execution paths, ensuring that AI agents operate within defined parameters without human oversight.</p>
     </div>
-
-    <div class="presale-bar-wrap">
-      <div class="presale-bar-top">
-        <span id="roundIndicatorLabel">Round 1 (Target: $150K Softcap)</span>
-        <span class="raised mono" id="barRaisedLabel">$109,224</span>
-      </div>
-      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
-      <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
+    <div class="arch-card">
+      <div class="arch-num">02</div>
+      <h3>Autonomous Settlement</h3>
+      <p>High-throughput state settlement channels configured for micro-transactions and automated machine-to-machine value exchange.</p>
     </div>
-
-    <div class="field-label">Pay with</div>
-    <div class="pay-select" id="paySelect">
-      <div class="pay-opt active" data-ticker="eth">ETH</div>
-      <div class="pay-opt" data-ticker="bnbbsc">BNB</div>
-      <div class="pay-opt" data-ticker="usdterc20">USDT</div>
-      <div class="pay-opt" data-ticker="maticmainnet">MATIC</div>
-      <div class="pay-opt" data-ticker="usdc">USDC</div>
+    <div class="arch-card">
+      <div class="arch-num">03</div>
+      <h3>Agent Governance</h3>
+      <p>Modular governance layers allowing agent swarms to dynamically reach consensus, allocate compute resources, and manage shared assets.</p>
     </div>
-
-    <div class="field-label">Amount</div>
-    <div class="amount-input">
-      <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
-      <span class="cur" id="payCurLabel">ETH</span>
-    </div>
-
-    <div class="receive-box">
-      <span class="lbl">You'll receive at presale end</span>
-      <span class="amt" id="receiveAmt">0 $AXN</span>
-    </div>
-
-    <button class="buy-btn" id="buyBtn" type="button">Buy $AXN</button>
-    <div class="buy-note">Transactions are submitted directly through your Web3 wallet.</div>
-    
-    <div style="text-align: center; margin-top: 16px; position: relative; z-index: 10;">
-      <a href="https://bscscan.com/address/0xC7C101be3e01258A4e6111273a412656E36Cd1a3" target="_blank" style="font-size: 12px; color: var(--signal-2); text-decoration: underline;">
-        Verify Contract on BscScan ↗
-      </a>
-    </div>
-  </div>
-
-  <!-- Presale Stages Grid Section -->
-  <div class="section-head" id="stages" style="margin-top: 40px;">
-    <div class="kicker">Structure</div>
-    <h2>10-Stage Presale Schedule</h2>
-    <p>Each stage represents $150,000 raised. Watch your stage status update in real time.</p>
-  </div>
-
-  <div class="stages-grid" id="stagesGrid">
-    <!-- Rendered dynamically by JavaScript -->
   </div>
 </section>
 
-<section class="section" id="how">
+<section class="section" id="sdk">
   <div class="section-head">
-    <div class="kicker">Process</div>
-    <h2>How to buy</h2>
+    <div class="kicker">Developer Integration</div>
+    <h2>Instant SDK Setup</h2>
+    <p>Initialize agent-to-agent transactions with minimal boilerplate using the AXON protocol SDK.</p>
+  </div>
+
+  <div class="sdk-section">
+    <div class="sdk-header">
+      <div class="sdk-tabs">
+        <button class="sdk-tab active" onclick="switchSdkTab('ts', event)">axon.ts</button>
+        <button class="sdk-tab" onclick="switchSdkTab('py', event)">axon.py</button>
+        <button class="sdk-tab" onclick="switchSdkTab('sol', event)">Escrow.sol</button>
+      </div>
+      <div class="mono" style="font-size:12px; color:var(--text-dim);">v1.4.2-stable</div>
+    </div>
+    <div class="sdk-body">
+      <div class="sdk-code-pane active" id="pane-ts">
+        <span class="code-comment">// Initialize AXON agent client for TypeScript</span><br>
+        <span class="code-keyword">import</span> { AxonProtocol, AgentNode } <span class="code-keyword">from</span> <span class="code-string">'@axon-protocol/sdk'</span>;<br><br>
+        <span class="code-keyword">const</span> node = <span class="code-keyword">new</span> <span class="code-title">AgentNode</span>({<br>
+        &nbsp;&nbsp;network: <span class="code-string">'mainnet'</span>,<br>
+        &nbsp;&nbsp;privateKey: process.env.AGENT_KEY,<br>
+        });<br><br>
+        <span class="code-keyword">async function</span> <span class="code-title">executeTask</span>() {<br>
+        &nbsp;&nbsp;<span class="code-keyword">const</span> session = <span class="code-keyword">await</span> node.createEscrowSession({<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;targetAgent: <span class="code-string">'0x91F...3b2'</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;amount: <span class="code-string">'50000000000000000'</span>, <span class="code-comment">// 0.05 AXN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;timeout: <span class="code-string">3600</span><br>
+        &nbsp;&nbsp;});<br>
+        &nbsp;&nbsp;<span class="code-keyword">await</span> session.verifyAndSettle();<br>
+        }
+      </div>
+      <div class="sdk-code-pane" id="pane-py">
+        <span class="code-comment"># Initialize AXON agent client for Python / LangChain</span><br>
+        <span class="code-keyword">from</span> axon_sdk <span class="code-keyword">import</span> AgentNode, EscrowManager<br><br>
+        node = AgentNode(network=<span class="code-string">"mainnet"</span>, api_key=os.getenv(<span class="code-string">"AXON_KEY"</span>))<br><br>
+        <span class="code-keyword">def</span> <span class="code-title">dispatch_subtask</span>(target_id, payload):<br>
+        &nbsp;&nbsp;escrow = EscrowManager(node)<br>
+        &nbsp;&nbsp;tx = escrow.lock_funds(recipient=target_id, amount=0.05)<br>
+        &nbsp;&nbsp;<span class="code-keyword">return</span> tx.verify_proof()<br>
+      </div>
+      <div class="sdk-code-pane" id="pane-sol">
+        <span class="code-comment">// Core AXON Settlement Escrow Primitive</span><br>
+        <span class="code-keyword">contract</span> <span class="code-title">AxonEscrow</span> {<br>
+        &nbsp;&nbsp;<span class="code-keyword">mapping</span>(<span class="code-keyword">bytes32</span> => <span class="code-keyword">uint256</span>) <span class="code-keyword">public</span> activeEscrows;<br><br>
+        &nbsp;&nbsp;<span class="code-keyword">function</span> <span class="code-title">verifyAndSettle</span>(<span class="code-keyword">bytes32</span> taskId, <span class="code-keyword">bytes</span> <span class="code-keyword">calldata</span> proof) <span class="code-keyword">external</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">require</span>(Verifier.validate(taskId, proof), <span class="code-string">"InvalidProof"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">address</span> recipient = escrowRecipients[taskId];<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">payable</span>(recipient).transfer(activeEscrows[taskId]);<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="terminal-box">
+    <div class="terminal-title">
+      <span style="color:var(--signal-2);">●</span> AXON Agent Network Stream (Live Testnet Simulation)
+    </div>
+    <div class="terminal-output" id="terminalOutput">
+      <div class="terminal-line">[07:39:50] Node initialized: 0x71F...3A9 Connected to AXON L1 Settlement Layer.</div>
+      <div class="terminal-line">[07:39:52] Broadcast intent: Task #4092 - Compute validation proof requested.</div>
+      <div class="terminal-line">[07:39:54] Peer matched: Agent_Node_Sigma (0x48B...11C). Escrow locked (0.05 AXN).</div>
+    </div>
+    <div class="terminal-input-row">
+      <input type="text" class="terminal-input" id="terminalInput" placeholder="Type command (e.g., 'ping', 'status', 'deploy-agent')..." onkeydown="handleTerminalKey(event)">
+      <button class="terminal-btn" onclick="executeTerminalCommand()">Send</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="workflow">
+  <div class="section-head">
+    <div class="kicker">Workflow</div>
+    <h2>How Machine-to-Machine Commerce Works</h2>
   </div>
   <div class="steps">
-    <div class="step"><div class="num">01</div><h3>Connect Wallet</h3><p>Select your preferred token and click Buy $AXN to connect your wallet.</p></div>
-    <div class="step"><div class="num">02</div><h3>Enter Amount</h3><p>Specify how much you wish to contribute to the presale.</p></div>
-    <div class="step"><div class="num">03</div><h3>Confirm Transaction</h3><p>Approve the transaction request directly inside your connected Web3 wallet.</p></div>
-    <div class="step"><div class="num">04</div><h3>Claim $AXN</h3><p>Tokens are distributed to your wallet address after presale close.</p></div>
-  </div>
-</section>
-
-<section class="section" id="tokenomics">
-  <div class="section-head">
-    <div class="kicker">Tokenomics</div>
-    <h2>Supply breakdown</h2>
-    <p>Aligned with Version 2.1 tokenomics structure.</p>
-  </div>
-  <div class="tokenomics">
-    <div class="tok-list">
-      <div class="tok-row"><span class="tok-swatch" style="background:#8b7fff"></span>Presale & Liquidity <span class="pct">80%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#5ee6c8"></span>CEX Listings & Marketing <span class="pct">10%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#ff3d71"></span>Community Rewards <span class="pct">10%</span></div>
-      <div class="tok-row"><span class="tok-swatch" style="background:#26263a"></span>Team & Founders <span class="pct">0%</span></div>
-    </div>
+    <div class="step"><div class="num">01</div><h3>Intent Broadcast</h3><p>An autonomous agent publishes its operational objective and resource requirements to the AXON network layer.</p></div>
+    <div class="step"><div class="num">02</div><h3>Peer Matching</h3><p>Matching algorithms discover compatible agents and establish cryptographically secured communication channels.</p></div>
+    <div class="step"><div class="num">03</div><h3>Atomic Execution</h3><p>Tasks are executed and verified via decentralized state proofs, eliminating counterparty risk.</p></div>
+    <div class="step"><div class="num">04</div><h3>Instant Settlement</h3><p>Value and proof of completion are settled atomically across the protocol network.</p></div>
   </div>
 </section>
 
 <section class="section" id="faq">
   <div class="section-head">
     <div class="kicker">FAQ</div>
-    <h2>Common questions</h2>
+    <h2>Technical Overview</h2>
   </div>
   <div class="faq">
     <details open>
-      <summary>How do the 10 rounds and price increases work?</summary>
-      <p>The presale features a hardcap of $1,500,000 divided into 10 rounds (each spanning 10% or $150k increments). Round 1 starts up to the softcap ($150,000). Every subsequent round increases the token price by $0.0005.</p>
+      <summary>What is the primary function of the AXON protocol?</summary>
+      <p>AXON acts as a decentralized settlement and trust layer specifically optimized for autonomous AI agents, facilitating secure machine-to-machine transactions, task verification, and decentralized coordination.</p>
     </details>
     <details>
-      <summary>When do I receive my tokens?</summary>
-      <p>Tokens are distributed to the wallet address you contribute from, after the presale ends and the claim portal opens.</p>
+      <summary>How does AXON ensure security between autonomous agents?</summary>
+      <p>By utilizing cryptographic execution proofs and modular escrow primitives, AXON guarantees that tasks are completed faithfully before any state changes or asset transfers settle.</p>
     </details>
     <details>
-      <summary>Is this financial advice?</summary>
-      <p>No. This page is for informational purposes only. Cryptocurrency presales carry significant risk, including total loss of funds. Do your own research.</p>
+      <summary>Can third-party AI frameworks integrate with AXON?</summary>
+      <p>Yes. The protocol provides open modular interfaces and smart contract primitives designed to integrate seamlessly with external agentic workflows and multi-agent systems.</p>
     </details>
   </div>
 </section>
 
 <footer>
   <div class="disclaimer">
-    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to lose, and verify all project details independently before contributing.
+    AXON is an advanced protocol infrastructure providing trust and settlement layers for autonomous agent networks. All technical specifications are subject to architectural updates.
   </div>
-  <div>© 2026 AXON. All rights reserved.</div>
+  <div>© 2026 AXON Protocol. All rights reserved.</div>
 </footer>
 
+<!-- Modal -->
+<div class="modal-overlay" id="walletModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="toggleWalletModal(false)">&times;</button>
+    <h3>Connect Agent Node</h3>
+    <p>Select your runtime environment or wallet to connect to the AXON network layer.</p>
+    <div class="wallet-option" onclick="simulateConnection('AXON CLI Runtime')">
+      <span>AXON CLI Runtime</span>
+      <span style="color:var(--signal-2); font-size:13px;" class="mono">Connected via API</span>
+    </div>
+    <div class="wallet-option" onclick="simulateConnection('MetaMask / EVM Node')">
+      <span>MetaMask / EVM Node</span>
+      <span style="color:var(--text-dim); font-size:13px;" class="mono">Injected</span>
+    </div>
+    <div class="wallet-option" onclick="simulateConnection('Cosmos Keplr Extension')">
+      <span>Cosmos Keplr Extension</span>
+      <span style="color:var(--text-dim); font-size:13px;" class="mono">Supported</span>
+    </div>
+  </div>
+</div>
+
 <script>
-  console.log("AXON Script initializing...");
+  console.log("AXON Protocol Architecture script initializing...");
+
+  function switchSdkTab(lang, evt) {
+    document.querySelectorAll('.sdk-code-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sdk-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('pane-' + lang).classList.add('active');
+    evt.currentTarget.classList.add('active');
+  }
+
+  const modal = document.getElementById('walletModal');
+  document.getElementById('connectWalletBtn').addEventListener('click', () => toggleWalletModal(true));
+
+  function toggleWalletModal(show) {
+    if (show) modal.classList.add('active');
+    else modal.classList.remove('active');
+  }
+
+  function simulateConnection(name) {
+    const btn = document.getElementById('connectWalletBtn');
+    btn.textContent = name.split(' ')[0] + ' Connected';
+    btn.style.background = 'var(--signal-2)';
+    btn.style.color = '#0a0a12';
+    toggleWalletModal(false);
+  }
+
+  function handleTerminalKey(e) {
+    if (e.key === 'Enter') executeTerminalCommand();
+  }
+
+  function executeTerminalCommand() {
+    const input = document.getElementById('terminalInput');
+    const output = document.getElementById('terminalOutput');
+    const val = input.value.trim();
+    if (!val) return;
+
+    const timeStr = new Date().toTimeString().split(' ')[0];
+    output.innerHTML += `<div class="terminal-line">[${timeStr}] > ${val}</div>`;
+
+    let response = `[${timeStr}] Command executed successfully. State verified.`;
+    if (val.toLowerCase() === 'ping') {
+      response = `[${timeStr}] PONG. Latency: 14ms. Node consensus active.`;
+    } else if (val.toLowerCase() === 'status') {
+      response = `[${timeStr}] AXON L1 Status: HEALTHY. Active Escrows: 1,429. TPS: 240.`;
+    } else if (val.toLowerCase() === 'deploy-agent') {
+      response = `[${timeStr}] Agent container initialized. Registry signature verified.`;
+    }
+
+    output.innerHTML += `<div class="terminal-line" style="color:#eceaf6;">${response}</div>`;
+    input.value = '';
+    output.scrollTop = output.scrollHeight;
+  }
 
   (function initFloatingTokens() {
     const container = document.getElementById('floatingTokensContainer');
@@ -615,333 +656,6 @@
       container.appendChild(el);
     }
   })();
-
-  const CONFIG = {
-    basePriceUsd: 0.001875,
-    raisedUsd: 109224,          
-    tokensSold: 58252800,          
-    softCapUsd: 150000,
-    hardCapUsd: 1500000,
-    rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
-    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
-  };
-
-  const CHAINS = {
-    eth:          { hex: '0x1', decimals: 18, native: true },
-    bnbbsc:       { hex: '0x38', decimals: 18, native: true, addParams: { chainName: 'BNB Smart Chain', nativeCurrency: {name:'BNB', symbol:'BNB', decimals:18}, rpcUrls: ['https://bsc-dataseed.binance.org/'], blockExplorerUrls: ['https://bscscan.com'] } },
-    maticmainnet: { hex: '0x89', decimals: 18, native: true, addParams: { chainName: 'Polygon Mainnet', nativeCurrency: {name:'MATIC', symbol:'MATIC', decimals:18}, rpcUrls: ['https://polygon-rpc.com/'], blockExplorerUrls: ['https://polygonscan.com'] } },
-    usdterc20:    { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
-    usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
-  };
-
-  function getCurrentRoundAndPrice(raised) {
-    const roundStep = CONFIG.hardCapUsd / 10;
-    let currentRound = Math.floor(raised / roundStep) + 1;
-    if (currentRound > 10) currentRound = 10;
-    if (currentRound < 1) currentRound = 1;
-
-    const currentPrice = CONFIG.basePriceUsd + ((currentRound - 1) * 0.0005);
-    return { round: currentRound, price: currentPrice };
-  }
-
-  function renderStagesGrid(currentRound) {
-    const stagesGrid = document.getElementById('stagesGrid');
-    if (!stagesGrid) return;
-    stagesGrid.innerHTML = '';
-
-    for (let r = 1; r <= 10; r++) {
-      const price = (CONFIG.basePriceUsd + ((r - 1) * 0.0005)).toFixed(6);
-      const card = document.createElement('div');
-      
-      let statusClass = 'upcoming';
-      let statusText = 'Upcoming';
-
-      if (r < currentRound) {
-        statusClass = 'completed';
-        statusText = 'Completed';
-      } else if (r === currentRound) {
-        statusClass = 'active';
-        statusText = 'Live Now';
-      }
-
-      card.className = `stage-card ${statusClass}`;
-      card.innerHTML = `
-        <div class="stage-num">Stage ${r}</div>
-        <div class="stage-price">$${price}</div>
-        <div class="stage-status">${statusText}</div>
-      `;
-      stagesGrid.appendChild(card);
-    }
-  }
-
-  function initDynamicStats() {
-    const STORAGE_KEY_RAISED = 'axon_presale_raised';
-    const STORAGE_KEY_SOLD = 'axon_presale_sold';
-    const STORAGE_KEY_TIME = 'axon_presale_last_update';
-
-    let storedRaised = localStorage.getItem(STORAGE_KEY_RAISED);
-    let storedSold = localStorage.getItem(STORAGE_KEY_SOLD);
-    let lastUpdate = localStorage.getItem(STORAGE_KEY_TIME);
-
-    const now = Date.now();
-    const sixteenHoursMs = 16 * 60 * 60 * 1000;
-
-    if (storedRaised && storedSold) {
-      CONFIG.raisedUsd = parseFloat(storedRaised);
-      CONFIG.tokensSold = parseInt(storedSold, 10);
-    }
-
-    if (!lastUpdate || (now - parseInt(lastUpdate, 10)) >= sixteenHoursMs) {
-      const randomAddUsd = Math.floor(Math.random() * (5000 - 500 + 1)) + 500;
-      const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
-      const randomAddTokens = Math.round(randomAddUsd / price);
-
-      CONFIG.raisedUsd = Math.min(CONFIG.hardCapUsd, CONFIG.raisedUsd + randomAddUsd);
-      CONFIG.tokensSold += randomAddTokens;
-
-      localStorage.setItem(STORAGE_KEY_RAISED, CONFIG.raisedUsd);
-      localStorage.setItem(STORAGE_KEY_SOLD, CONFIG.tokensSold);
-      localStorage.setItem(STORAGE_KEY_TIME, now);
-    }
-  }
-
-  initDynamicStats();
-
-  function updateDisplayStats() {
-    const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.hardCapUsd) * 100);
-    const { round, price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
-
-    document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-    document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-    document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
-    document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-    document.getElementById('statRound').textContent = 'Round ' + round;
-    document.getElementById('statPrice').textContent = '$' + price.toFixed(6);
-    document.getElementById('roundIndicatorLabel').textContent = `Round ${round} of 10 (Target: $${(round * 150000).toLocaleString()})`;
-    
-    renderStagesGrid(round);
-    updateReceiveAmount();
-  }
-
-  updateDisplayStats();
-
-  let selectedTicker = 'eth'; 
-  const payOpts = document.querySelectorAll('.pay-opt');
-  payOpts.forEach(opt => {
-    const handleSelect = (e) => {
-      if (e) e.preventDefault();
-      payOpts.forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-      selectedTicker = opt.dataset.ticker;
-      document.getElementById('payCurLabel').textContent = opt.textContent;
-      updateReceiveAmount();
-    };
-    opt.addEventListener('click', handleSelect);
-    opt.addEventListener('touchend', handleSelect, {passive: false});
-  });
-
-  const amountInput = document.getElementById('payAmount');
-  const receiveEl = document.getElementById('receiveAmt');
-  
-  function updateReceiveAmount(){
-    const amt = parseFloat(amountInput.value) || 0;
-    const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
-    const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
-    const tokens = usdValue / price;
-    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
-  }
-  amountInput.addEventListener('input', updateReceiveAmount);
-
-  let connectedAccount = null;
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const walletModal = document.getElementById('walletModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-
-  async function updateWalletUI(account) {
-    connectedAccount = account;
-    if (account) {
-      connectBtn.textContent = account.slice(0,6) + '…' + account.slice(-4);
-      connectBtn.classList.add('connected');
-      if (!connectBtn.querySelector('.wdot')) {
-        connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
-      }
-    } else {
-      connectBtn.textContent = 'Connect Wallet';
-      connectBtn.classList.remove('connected');
-    }
-  }
-
-  function openModal(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (walletModal) walletModal.classList.add('active');
-  }
-
-  function closeModal(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (walletModal) walletModal.classList.remove('active');
-  }
-
-  connectBtn.addEventListener('click', openModal);
-  connectBtn.addEventListener('touchend', openModal, {passive: false});
-
-  closeModalBtn.addEventListener('click', closeModal);
-  closeModalBtn.addEventListener('touchend', closeModal, {passive: false});
-
-  walletModal.addEventListener('click', (e) => {
-    if (e.target === walletModal) closeModal(e);
-  });
-
-  document.querySelectorAll('.wallet-option').forEach(option => {
-    const handleWalletSelect = async (e) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const walletType = option.dataset.wallet;
-      closeModal(e);
-      await connectWallet(walletType);
-    };
-    option.addEventListener('click', handleWalletSelect);
-    option.addEventListener('touchend', handleWalletSelect, {passive: false});
-  });
-
-  async function connectWallet(walletType = 'metamask') {
-    let provider = window.ethereum;
-
-    if (!provider && window.web3) {
-      provider = window.web3.currentProvider;
-    }
-
-    if (!provider) {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-        const confirmOpen = confirm("No Web3 provider detected in standard browser. Open in MetaMask app browser?");
-        if (confirmOpen) {
-          window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
-        }
-      } else {
-        alert("No Web3 wallet extension detected. Please install MetaMask or open via a DApp browser.");
-      }
-      return null;
-    }
-
-    try {
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      if (accounts && accounts.length > 0) {
-        await updateWalletUI(accounts[0]);
-        return accounts[0];
-      }
-    } catch (err) {
-      console.error("Wallet connection error:", err);
-      alert('Wallet connection rejected or failed.');
-      return null;
-    }
-  }
-
-  if (window.ethereum) {
-    window.ethereum.on('accountsChanged', (accounts) => {
-      updateWalletUI(accounts.length ? accounts[0] : null);
-    });
-  }
-
-  function toHexWei(amountStr, decimals) {
-    let [whole, frac = ''] = String(amountStr).split('.');
-    frac = (frac + '0'.repeat(decimals)).slice(0, decimals);
-    const combined = (whole + frac).replace(/^0+(?=\d)/, '');
-    return '0x' + BigInt(combined || '0').toString(16);
-  }
-
-  function buildErc20TransferData(toAddress, amountStr, decimals) {
-    const selector = 'a9059cbb';
-    const addrPadded = toAddress.replace('0x','').toLowerCase().padStart(64, '0');
-    const amountHex = BigInt(toHexWei(amountStr, decimals)).toString(16).padStart(64, '0');
-    return '0x' + selector + addrPadded + amountHex;
-  }
-
-  async function ensureChain(hexChainId, addParams) {
-    const currentChain = await window.ethereum.request({ method: 'eth_chainId' });
-    if (currentChain === hexChainId) return;
-    try {
-      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] });
-    } catch (switchErr) {
-      if (switchErr.code === 4902 && addParams) {
-        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId: hexChainId, ...addParams }] });
-      } else {
-        throw switchErr;
-      }
-    }
-  }
-
-  const buyBtn = document.getElementById('buyBtn');
-  const handleBuyAction = async (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const amt = parseFloat(amountInput.value);
-    if (!amt || amt <= 0) { 
-      alert('Please enter a valid amount.'); 
-      return; 
-    }
-
-    const originalText = buyBtn.textContent;
-
-    try {
-      let account = connectedAccount;
-      if (!account) {
-        buyBtn.textContent = 'Connecting Wallet...';
-        account = await connectWallet();
-        if (!account) {
-          buyBtn.textContent = originalText;
-          return; 
-        }
-      }
-
-      buyBtn.textContent = 'Confirm in Wallet...';
-      const chainInfo = CHAINS[selectedTicker];
-      if (!chainInfo) throw new Error('Unsupported network currency.');
-
-      await ensureChain(chainInfo.hex, chainInfo.addParams);
-
-      let txParams = chainInfo.native ? {
-        from: account,
-        to: CONFIG.axonTokenAddress,
-        value: toHexWei(String(amt), chainInfo.decimals)
-      } : {
-        from: account,
-        to: chainInfo.tokenAddress,
-        value: '0x0',
-        data: buildErc20TransferData(CONFIG.axonTokenAddress, String(amt), chainInfo.decimals)
-      };
-
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [txParams]
-      });
-
-      alert('Success! Tx Hash: ' + txHash);
-
-    } catch (err) {
-      console.error("Buy action error:", err);
-      alert('Error: ' + (err.message || 'Unknown error occurred'));
-    } finally {
-      buyBtn.textContent = originalText;
-      buyBtn.disabled = false;
-    }
-  };
-
-  buyBtn.addEventListener('click', handleBuyAction);
-  buyBtn.addEventListener('touchend', handleBuyAction, {passive: false});
-
-  updateReceiveAmount();
-  console.log("AXON Script fully loaded with fixed z-index and touch event bindings.");
 </script>
 
 </body>
