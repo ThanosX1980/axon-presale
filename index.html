@@ -44,28 +44,16 @@
   }
 
   .floating-tokens-container {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   }
   .floating-token {
-    position: absolute;
-    border-radius: 50%;
+    position: absolute; border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, #1a1a2e 0%, #0d0d1a 70%, #05050a 100%);
     border: 1.5px solid rgba(139, 127, 255, 0.4);
     box-shadow: 0 0 15px rgba(94, 230, 200, 0.25), inset 0 0 10px rgba(139, 127, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     animation: floatToken var(--float-duration, 15s) ease-in-out infinite alternate;
     opacity: 0.45;
-  }
-  .floating-token svg {
-    width: 70%;
-    height: 70%;
-    filter: drop-shadow(0 0 4px rgba(94, 230, 200, 0.6));
   }
   @keyframes floatToken {
     0% { transform: translateY(0px) translateX(0px) rotate(0deg) scale(var(--scale, 1)); }
@@ -96,9 +84,7 @@
   }
   @media(max-width:720px){.nav-links{display:none;}}
 
-  .hero{
-    padding:96px 24px 64px;text-align:center;position:relative;z-index:1;
-  }
+  .hero{padding:96px 24px 64px;text-align:center;position:relative;z-index:1;}
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     border:1px solid var(--line);background:var(--bg-panel);
@@ -114,20 +100,7 @@
     background:linear-gradient(90deg,var(--signal),var(--signal-2));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .hero-sub{
-    max-width:560px;margin:0 auto 40px;color:var(--text-dim);font-size:17px;
-  }
-
-  .axon-visual{
-    max-width:640px;margin:0 auto 48px;height:64px;position:relative;
-  }
-  .axon-visual svg{width:100%;height:100%;overflow:visible;}
-  .axon-line{stroke:var(--line);stroke-width:2;fill:none;}
-  .axon-pulse{
-    fill:var(--signal-2);
-    filter:drop-shadow(0 0 8px var(--signal-2));
-  }
-  .axon-node{fill:var(--bg-panel);stroke:var(--line);stroke-width:1.5;}
+  .hero-sub{max-width:560px;margin:0 auto 40px;color:var(--text-dim);font-size:17px;}
 
   .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn{
@@ -154,11 +127,11 @@
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
   .section-head p{color:var(--text-dim);margin-top:10px;}
 
-  /* Presale Buy Card */
+  /* Buy Card */
   .buy-card{
     max-width:480px;margin:0 auto 64px;
     background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
-    padding:28px;position:relative;
+    padding:28px;position:relative;z-index:5;
   }
   .presale-bar-wrap{margin-bottom:24px;}
   .presale-bar-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;}
@@ -171,28 +144,18 @@
     height:100%;border-radius:999px;
     background:linear-gradient(90deg,var(--signal),var(--signal-2));
     position:relative;
-    width:var(--fill,0%);
+    width:0%;
     transition:width .6s ease;
   }
-  .presale-bar-fill::after{
-    content:'';position:absolute;top:0;right:0;bottom:0;width:24px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));
-    animation:sweep 2s linear infinite;
-  }
-  @keyframes sweep{0%{transform:translateX(0);opacity:0;}30%{opacity:1;}100%{transform:translateX(30px);opacity:0;}}
-
   .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-top:10px;}
   .price-row .mono{color:var(--text);}
 
   .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
-  .pay-select{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
-  }
+  .pay-select{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
   .pay-opt{
     border:1px solid var(--line);background:var(--bg-panel-2);border-radius:99px;
     padding:10px 4px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
-    color:var(--text-dim);transition:all .15s ease;
-    user-select:none;
+    color:var(--text-dim);transition:all .15s ease;user-select:none;
   }
   .pay-opt.active{border-color:var(--signal);color:var(--signal-2);background:rgba(139,127,255,.08);}
 
@@ -202,8 +165,7 @@
   }
   .amount-input input{
     flex:1;background:transparent;border:none;outline:none;color:var(--text);
-    font-family:'IBM Plex Mono',monospace;font-size:18px;
-    width: 100%;
+    font-family:'IBM Plex Mono',monospace;font-size:18px;width:100%;
   }
   .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;white-space:nowrap;margin-left:8px;}
 
@@ -222,71 +184,34 @@
   }
   .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
   .buy-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-  .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
 
   .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
   .wallet-btn{
     background:var(--bg-panel-2);border:1px solid var(--line);border-radius:99px;
     padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
-    display:inline-flex;align-items:center;gap:8px;
-    pointer-events: auto !important;
+    display:inline-flex;align-items:center;gap:8px;position:relative;z-index:10;
   }
   .wallet-btn:hover{border-color:var(--signal);}
   .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
-  .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
+  .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);display:inline-block;}
   .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
 
-  /* Presale Stages Grid Styles */
+  /* Stages Grid */
   .stages-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    max-width: 1000px;
-    margin: 0 auto;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; max-width: 1000px; margin: 0 auto;
   }
   .stage-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 14px;
-    text-align: center;
-    position: relative;
-    transition: all 0.2s ease;
+    background: var(--bg-panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 14px; text-align: center;
   }
   .stage-card.active {
-    border-color: var(--signal-2);
-    box-shadow: 0 0 16px rgba(94, 230, 200, 0.15);
-    background: radial-gradient(circle at top, rgba(94, 230, 200, 0.08) 0%, var(--bg-panel) 70%);
+    border-color: var(--signal-2); box-shadow: 0 0 16px rgba(94, 230, 200, 0.15);
   }
-  .stage-card.completed {
-    border-color: rgba(139, 127, 255, 0.3);
-    opacity: 0.75;
-  }
-  .stage-num {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
+  .stage-card.completed { border-color: rgba(139, 127, 255, 0.3); opacity: 0.75; }
+  .stage-num { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
   .stage-card.active .stage-num { color: var(--signal-2); }
-  .stage-price {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .stage-status {
-    display: inline-block;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 99px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+  .stage-price { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .stage-status { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
   .stage-card.completed .stage-status { background: rgba(139, 127, 255, 0.15); color: var(--signal); }
   .stage-card.active .stage-status { background: rgba(94, 230, 200, 0.2); color: var(--signal-2); }
   .stage-card.upcoming .stage-status { background: var(--bg-panel-2); color: var(--text-dimmer); }
@@ -294,65 +219,29 @@
   @media(max-width:900px){ .stages-grid { grid-template-columns: repeat(2, 1fr); } }
   @media(max-width:480px){ .stages-grid { grid-template-columns: 1fr; } }
 
-  /* Wallet Modal Styles */
+  /* Wallet Modal */
   .wallet-modal-overlay {
     position: fixed; inset: 0; background: rgba(10,10,18,0.85); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 99999;
+    display: none; align-items: center; justify-content: center; z-index: 999999;
   }
-  .wallet-modal-overlay.active { display: flex; }
+  .wallet-modal-overlay.open { display: flex; }
   .wallet-modal {
     background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
     width: 90%; max-width: 360px; padding: 24px; text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
   }
-  .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
+  .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; }
   .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
   .wallet-option {
     background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
     padding: 14px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
+    display: flex; align-items: center; justify-content: space-between;
   }
   .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
   .wallet-modal-close {
-    background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
-    padding: 8px;
+    background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px; padding: 8px;
   }
 
-  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
-  .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
-  .step .num{
-    font-family:'IBM Plex Mono',monospace;color:var(--signal-2);font-size:13px;
-    border:1px solid var(--line);width:28px;height:28px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;margin-bottom:14px;
-  }
-  .step h3{font-size:16px;margin-bottom:6px;}
-  .step p{font-size:13.5px;color:var(--text-dim);}
-  @media(max-width:800px){.steps{grid-template-columns:1fr 1fr;}}
-  @media(max-width:520px){.steps{grid-template-columns:1fr;}}
-
-  .tokenomics{
-    display:flex;gap:40px;max-width:900px;margin:0 auto;align-items:center;flex-wrap:wrap;justify-content:center;
-  }
-  .tok-list{flex:1;min-width:260px;display:flex;flex-direction:column;gap:14px;}
-  .tok-row{display:flex;align-items:center;gap:12px;font-size:14px;}
-  .tok-swatch{width:10px;height:10px;border-radius:2px;}
-  .tok-row .pct{margin-left:auto;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);}
-
-  .faq{max-width:720px;margin:0 auto;}
-  details{
-    border-bottom:1px solid var(--line);padding:18px 4px;
-  }
-  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center;}
-  summary::-webkit-details-marker{display:none;}
-  summary::after{content:'+';color:var(--text-dim);font-size:20px;}
-  details[open] summary::after{content:'–';}
-  details p{color:var(--text-dim);font-size:14px;margin-top:10px;}
-
-  footer{
-    border-top:1px solid var(--line);padding:36px 24px;text-align:center;
-    color:var(--text-dimmer);font-size:12.5px;position:relative;z-index:1;
-  }
-  footer .disclaimer{max-width:640px;margin:0 auto 16px;line-height:1.6;}
+  footer{border-top:1px solid var(--line);padding:36px 24px;text-align:center;color:var(--text-dimmer);font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -362,12 +251,10 @@
 
 <!-- Wallet Selection Modal -->
 <div class="wallet-modal-overlay" id="walletModal">
-  <div class="wallet-modal" id="walletModalBox">
+  <div class="wallet-modal">
     <h3>Select Wallet</h3>
     <div class="wallet-option-list">
-      <div class="wallet-option" data-wallet="metamask"><span>MetaMask / Injected</span> →</div>
-      <div class="wallet-option" data-wallet="trust"><span>Trust Wallet</span> →</div>
-      <div class="wallet-option" data-wallet="coinbase"><span>Coinbase Wallet</span> →</div>
+      <div class="wallet-option" id="connectMetaMaskBtn"><span>MetaMask / Injected Web3</span> →</div>
     </div>
     <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
   </div>
@@ -378,9 +265,6 @@
   <div class="nav-links">
     <a href="#buy">Presale</a>
     <a href="#stages">Stages</a>
-    <a href="#how">How to Buy</a>
-    <a href="#tokenomics">Tokenomics</a>
-    <a href="#faq">FAQ</a>
   </div>
   <a href="#buy" class="nav-cta">Buy $AXN</a>
 </nav>
@@ -422,7 +306,7 @@
         <span id="roundIndicatorLabel">Round 1 (Target: $150K Softcap)</span>
         <span class="raised mono" id="barRaisedLabel">$109,224</span>
       </div>
-      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
+      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill"></div></div>
       <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
     </div>
 
@@ -437,7 +321,7 @@
 
     <div class="field-label">Amount</div>
     <div class="amount-input">
-      <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
+      <input type="number" id="payAmount" value="1" min="0" step="any">
       <span class="cur" id="payCurLabel">ETH</span>
     </div>
 
@@ -457,12 +341,10 @@
 </section>
 
 <footer>
-  <div class="disclaimer">$AXN is a presale token. Cryptocurrency investments are volatile and carry risk.</div>
   <div>© 2026 AXON. All rights reserved.</div>
 </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
   const CONFIG = {
     basePriceUsd: 0.001875,
     raisedUsd: 109224,          
@@ -479,6 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
     usdterc20:    { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
     usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
   };
+
+  let selectedTicker = 'eth';
+  let connectedAccount = null;
 
   function getCurrentRoundAndPrice(raised) {
     const roundStep = CONFIG.hardCapUsd / 10;
@@ -507,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDisplayStats() {
     const fill = Math.min(100, (CONFIG.raisedUsd / CONFIG.hardCapUsd) * 100);
     const { round, price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
-    document.getElementById('presaleFill').style.setProperty('--fill', fill.toFixed(1) + '%');
+    document.getElementById('presaleFill').style.width = fill.toFixed(1) + '%';
     document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
     document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
     document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
@@ -517,95 +402,46 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStagesGrid(round);
     updateReceiveAmount();
   }
-  updateDisplayStats();
 
-  // Currency Selection Logic
-  let selectedTicker = 'eth'; 
-  const payOpts = document.querySelectorAll('.pay-opt');
-  payOpts.forEach(opt => {
-    opt.addEventListener('click', () => {
-      payOpts.forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-      selectedTicker = opt.dataset.ticker;
-      document.getElementById('payCurLabel').textContent = opt.textContent;
-      updateReceiveAmount();
-    });
-  });
-
-  const amountInput = document.getElementById('payAmount');
-  const receiveEl = document.getElementById('receiveAmt');
-  
-  function updateReceiveAmount(){
+  function updateReceiveAmount() {
+    const amountInput = document.getElementById('payAmount');
+    const receiveEl = document.getElementById('receiveAmt');
     const amt = parseFloat(amountInput.value) || 0;
     const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
     const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
     const tokens = usdValue / price;
-    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
+    receiveEl.textContent = tokens.toLocaleString(undefined, {maximumFractionDigits:0}) + ' $AXN';
   }
-  amountInput.addEventListener('input', updateReceiveAmount);
-
-  // Wallet Connection Logic
-  let connectedAccount = null;
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const walletModal = document.getElementById('walletModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
 
   function updateWalletUI(account) {
     connectedAccount = account;
+    const connectBtn = document.getElementById('connectWalletBtn');
     if (account) {
-      connectBtn.textContent = account.slice(0,6) + '…' + account.slice(-4);
+      connectBtn.textContent = account.slice(0, 6) + '…' + account.slice(-4);
       connectBtn.classList.add('connected');
-      if (!connectBtn.querySelector('.wdot')) {
-        connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
-      }
+      connectBtn.insertAdjacentHTML('afterbegin', '<span class="wdot"></span>');
     } else {
-      connectBtn.textContent = 'Connect Wallet';
+      connectBtn.innerHTML = '<span class="wdot"></span>Connect Wallet';
       connectBtn.classList.remove('connected');
     }
   }
 
-  connectBtn.addEventListener('click', () => {
-    walletModal.classList.add('active');
-  });
-
-  closeModalBtn.addEventListener('click', () => {
-    walletModal.classList.remove('active');
-  });
-
-  walletModal.addEventListener('click', (e) => {
-    if (e.target === walletModal) {
-      walletModal.classList.remove('active');
-    }
-  });
-
-  document.querySelectorAll('.wallet-option').forEach(option => {
-    option.addEventListener('click', async () => {
-      walletModal.classList.remove('active');
-      await connectWallet();
-    });
-  });
-
   async function connectWallet() {
-    const provider = window.ethereum || window.web3?.currentProvider;
-    if (!provider) {
-      alert("No Web3 provider detected. Please open this page inside a Web3 wallet browser (MetaMask, Trust Wallet, etc.).");
+    if (!window.ethereum) {
+      alert("No Web3 provider (MetaMask/Trust) detected. Please open inside a Web3 wallet browser.");
       return null;
     }
     try {
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       if (accounts && accounts.length > 0) {
         updateWalletUI(accounts[0]);
         return accounts[0];
       }
     } catch (err) {
       console.error(err);
-      alert('Wallet connection was rejected or failed.');
+      alert('Wallet connection request was rejected.');
     }
     return null;
-  }
-
-  if (window.ethereum) {
-    window.ethereum.on('accountsChanged', (accs) => updateWalletUI(accs.length ? accs[0] : null));
   }
 
   function toHexWei(amountStr, decimals) {
@@ -635,58 +471,104 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Buy Action Logic
-  const buyBtn = document.getElementById('buyBtn');
-  buyBtn.addEventListener('click', async () => {
-    const amt = parseFloat(amountInput.value);
-    if (!amt || amt <= 0) { alert('Please enter a valid amount.'); return; }
+  // Event Listeners setup after DOM is fully available
+  window.addEventListener('DOMContentLoaded', () => {
+    updateDisplayStats();
 
-    const originalText = buyBtn.textContent;
-    try {
-      let account = connectedAccount;
-      if (!account) {
-        buyBtn.textContent = 'Connecting Wallet...';
-        account = await connectWallet();
-        if (!account) { buyBtn.textContent = originalText; return; }
+    // Currency selector tabs
+    document.querySelectorAll('.pay-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        selectedTicker = e.currentTarget.dataset.ticker;
+        document.getElementById('payCurLabel').textContent = e.currentTarget.textContent;
+        updateReceiveAmount();
+      });
+    });
+
+    // Amount input handler
+    document.getElementById('payAmount').addEventListener('input', updateReceiveAmount);
+
+    // Wallet modal bindings
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const walletModal = document.getElementById('walletModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const connectMetaMaskBtn = document.getElementById('connectMetaMaskBtn');
+
+    connectWalletBtn.addEventListener('click', () => {
+      walletModal.classList.add('open');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      walletModal.classList.remove('open');
+    });
+
+    walletModal.addEventListener('click', (e) => {
+      if (e.target === walletModal) walletModal.classList.remove('open');
+    });
+
+    connectMetaMaskBtn.addEventListener('click', async () => {
+      walletModal.classList.remove('open');
+      await connectWallet();
+    });
+
+    // Buy transaction action
+    const buyBtn = document.getElementById('buyBtn');
+    buyBtn.addEventListener('click', async () => {
+      const amtInput = document.getElementById('payAmount');
+      const amt = parseFloat(amtInput.value);
+      if (!amt || amt <= 0) {
+        alert('Please enter a valid amount to invest.');
+        return;
       }
 
-      buyBtn.textContent = 'Preparing Transaction...';
-      buyBtn.disabled = true;
+      const originalText = buyBtn.textContent;
+      try {
+        let account = connectedAccount;
+        if (!account) {
+          buyBtn.textContent = 'Connecting Wallet...';
+          account = await connectWallet();
+          if (!account) {
+            buyBtn.textContent = originalText;
+            return;
+          }
+        }
 
-      const chainInfo = CHAINS[selectedTicker];
-      if (!chainInfo) throw new Error('Unsupported network token.');
+        buyBtn.textContent = 'Preparing Transaction...';
+        buyBtn.disabled = true;
 
-      await ensureChain(chainInfo.hex, chainInfo.addParams);
+        const chainInfo = CHAINS[selectedTicker];
+        if (!chainInfo) throw new Error('Unsupported network token selected.');
 
-      let txParams = chainInfo.native ? {
-        from: account,
-        to: CONFIG.treasuryAddress,
-        value: toHexWei(String(amt), chainInfo.decimals)
-      } : {
-        from: account,
-        to: chainInfo.tokenAddress,
-        value: '0x0',
-        data: buildErc20TransferData(CONFIG.treasuryAddress, String(amt), chainInfo.decimals)
-      };
+        await ensureChain(chainInfo.hex, chainInfo.addParams);
 
-      buyBtn.textContent = 'Confirm in Wallet...';
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [txParams]
-      });
+        let txParams = chainInfo.native ? {
+          from: account,
+          to: CONFIG.treasuryAddress,
+          value: toHexWei(String(amt), chainInfo.decimals)
+        } : {
+          from: account,
+          to: chainInfo.tokenAddress,
+          value: '0x0',
+          data: buildErc20TransferData(CONFIG.treasuryAddress, String(amt), chainInfo.decimals)
+        };
 
-      alert('Success! Transaction Hash: ' + txHash);
-    } catch (err) {
-      console.error(err);
-      alert('Transaction failed: ' + (err.message || 'Unknown error'));
-    } finally {
-      buyBtn.textContent = originalText;
-      buyBtn.disabled = false;
-    }
+        buyBtn.textContent = 'Confirm in Wallet...';
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [txParams]
+        });
+
+        alert('Transaction successful! Hash: ' + txHash);
+      } catch (err) {
+        console.error(err);
+        alert('Transaction failed: ' + (err.message || 'Unknown error'));
+      } finally {
+        buyBtn.textContent = originalText;
+        buyBtn.disabled = false;
+      }
+    });
   });
-
-  updateReceiveAmount();
-});
 </script>
 </body>
 </html>
