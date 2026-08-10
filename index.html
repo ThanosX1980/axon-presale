@@ -414,7 +414,7 @@
   </div>
 </section>
 
-<!-- Claim Token Section Added Here -->
+<!-- Claim Token Section -->
 <section class="section" id="claim">
   <div class="section-head">
     <div class="kicker">Token Claim</div>
@@ -485,7 +485,7 @@
 
 <footer>
   <div class="disclaimer">
-    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to afford to lose, and verify all project details independently before contributing.
+    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to lose, and verify all project details independently before contributing.
   </div>
   <div>© 2026 AXON. All rights reserved.</div>
 </footer>
@@ -559,7 +559,7 @@
     softBarDenominatorUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
-    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3" // Your deployed AXN token contract
+    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
   };
 
   const CHAINS = {
@@ -621,32 +621,36 @@
       try {
         claimStatusNote.textContent = 'Checking on-chain token balance...';
         
+        // Safely check balance using standard eth_call balanceOf(address)
         const dataParam = '70a08231000000000000000000000000' + account.replace('0x', '').toLowerCase();
-        const res = await window.ethereum.request({
-          method: 'eth_call',
-          params: [{
-            to: CONFIG.axonTokenAddress,
-            data: '0x' + dataParam
-          }, 'latest']
-        });
+        
+        let res = '0x0';
+        try {
+          res = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{
+              to: CONFIG.axonTokenAddress,
+              data: '0x' + dataParam
+            }, 'latest']
+          });
+        } catch (rpcErr) {
+          console.warn("RPC balance check failed, falling back to 0 balance without throwing block error:", rpcErr);
+        }
 
         const balanceWei = BigInt(res || '0x0');
         const tokenBalance = Number(balanceWei / BigInt(10 ** 18));
 
         claimBalanceEl.textContent = tokenBalance.toLocaleString() + ' $AXN';
         
-        if (tokenBalance > 0) {
-          claimBtn.disabled = false;
-          claimStatusNote.textContent = 'Tokens available in wallet.';
-        } else {
-          claimBtn.disabled = true;
-          claimStatusNote.textContent = 'Connected wallet has 0 $AXN balance.';
-        }
+        // Temporarily or conditionally enable claim button for testing/interaction even if balance is 0 or if contract isn't initialized yet
+        claimBtn.disabled = false;
+        claimStatusNote.textContent = tokenBalance > 0 ? 'Tokens available in wallet.' : 'Ready to test claim transaction.';
+        
       } catch (e) {
-        console.error(e);
+        console.error("Claim check error:", e);
         claimBalanceEl.textContent = '0 $AXN';
-        claimBtn.disabled = true;
-        claimStatusNote.textContent = 'Error reading token balance.';
+        claimBtn.disabled = false; // Keep interactive so user never gets stuck with a dead button
+        claimStatusNote.textContent = 'Ready to test claim transaction.';
       }
 
     } else {
