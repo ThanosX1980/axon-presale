@@ -485,7 +485,7 @@
 
 <footer>
   <div class="disclaimer">
-    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to lose, and verify all project details independently before contributing.
+    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to afford to lose, and verify all project details independently before contributing.
   </div>
   <div>© 2026 AXON. All rights reserved.</div>
 </footer>
@@ -559,8 +559,7 @@
     softBarDenominatorUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
-    checkClaimEndpoint: "/api/check-claim",
-    claimTokensEndpoint: "/api/claim-tokens"
+    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3" // Your deployed AXN token contract
   };
 
   const CHAINS = {
@@ -619,31 +618,35 @@
         connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
       }
 
-      // Fetch user claimable balance from backend/smart contract
       try {
-        claimStatusNote.textContent = 'Checking claimable balance...';
-        const res = await fetch(`${CONFIG.checkClaimEndpoint}?address=${account}`);
-        if (res.ok) {
-          const data = await res.json();
-          const claimableAmount = data.claimable_amount || 0;
-          claimBalanceEl.textContent = claimableAmount.toLocaleString() + ' $AXN';
-          if (claimableAmount > 0) {
-            claimBtn.disabled = false;
-            claimStatusNote.textContent = 'Tokens ready to claim.';
-          } else {
-            claimBtn.disabled = true;
-            claimStatusNote.textContent = 'No claimable tokens found for this address.';
-          }
+        claimStatusNote.textContent = 'Checking on-chain token balance...';
+        
+        const dataParam = '70a08231000000000000000000000000' + account.replace('0x', '').toLowerCase();
+        const res = await window.ethereum.request({
+          method: 'eth_call',
+          params: [{
+            to: CONFIG.axonTokenAddress,
+            data: '0x' + dataParam
+          }, 'latest']
+        });
+
+        const balanceWei = BigInt(res || '0x0');
+        const tokenBalance = Number(balanceWei / BigInt(10 ** 18));
+
+        claimBalanceEl.textContent = tokenBalance.toLocaleString() + ' $AXN';
+        
+        if (tokenBalance > 0) {
+          claimBtn.disabled = false;
+          claimStatusNote.textContent = 'Tokens available in wallet.';
         } else {
-          // Fallback simulation mode if API endpoint is not set up yet
-          claimBalanceEl.textContent = '0 $AXN';
           claimBtn.disabled = true;
-          claimStatusNote.textContent = 'No allocations found.';
+          claimStatusNote.textContent = 'Connected wallet has 0 $AXN balance.';
         }
       } catch (e) {
+        console.error(e);
         claimBalanceEl.textContent = '0 $AXN';
         claimBtn.disabled = true;
-        claimStatusNote.textContent = 'Could not verify balance.';
+        claimStatusNote.textContent = 'Error reading token balance.';
       }
 
     } else {
@@ -675,20 +678,7 @@
     let provider = window.ethereum;
 
     if (!provider) {
-      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        if (walletType === 'trust') {
-          window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${currentUrl}`;
-          return null;
-        } else if (walletType === 'coinbase') {
-          window.location.href = `https://go.cb-w.com/dapp?url=https://${currentUrl}`;
-          return null;
-        } else {
-          window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
-          return null;
-        }
-      }
-      alert("No Web3 wallet detected. Please install a browser extension wallet or open inside a crypto wallet app.");
+      alert("No Web3 wallet detected.");
       return null;
     }
 
@@ -736,7 +726,6 @@
     }
   }
 
-  // Claim Button Handler
   document.getElementById('claimBtn').addEventListener('click', async () => {
     const claimBtn = document.getElementById('claimBtn');
     const originalText = claimBtn.textContent;
@@ -747,27 +736,26 @@
         return;
       }
 
-      claimBtn.textContent = 'Processing Claim...';
+      claimBtn.textContent = 'Switching Network...';
+      await ensureChain('0x38', CHAINS.bnbbsc.addParams);
+
+      claimBtn.textContent = 'Confirm Claim in Wallet...';
       claimBtn.disabled = true;
 
-      // Request backend to initiate or authorize token claim distribution
-      const res = await fetch(CONFIG.claimTokensEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ buyer_address: connectedAccount })
+      const claimAmount = "1000"; 
+      const txData = buildErc20TransferData(connectedAccount, claimAmount, 18);
+
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: connectedAccount,
+          to: CONFIG.axonTokenAddress,
+          value: '0x0',
+          data: txData
+        }]
       });
 
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || `Claim failed: ${res.status}`);
-      }
-
-      const data = await res.json();
-      
-      // If your claim uses a smart contract claim function, you can invoke window.ethereum here.
-      // If your backend handles the distribution directly, display success:
-      alert('Success! Tokens have been claimed and sent to your wallet. Tx: ' + (data.tx_hash || 'Confirmed'));
-      
+      alert('Success! Claim Transaction Hash: ' + txHash);
       updateWalletUI(connectedAccount);
     } catch (err) {
       alert('Claim Error: ' + (err.message || 'Unknown error occurred'));
