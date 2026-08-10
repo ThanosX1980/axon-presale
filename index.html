@@ -236,28 +236,6 @@
   .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
   .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
 
-  /* Wallet Modal Styles */
-  .wallet-modal-overlay {
-    position: fixed; inset: 0; background: rgba(10,10,18,0.8); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
-  }
-  .wallet-modal-overlay.active { display: flex; }
-  .wallet-modal {
-    background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
-    width: 100%; max-width: 360px; padding: 24px; text-align: center;
-  }
-  .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
-  .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
-  .wallet-option {
-    background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
-    padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
-  }
-  .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
-  .wallet-modal-close {
-    background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
-  }
-
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
   .step{padding:22px;background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;}
   .step .num{
@@ -301,19 +279,6 @@
 
 <!-- Animated Glowing Floating AXN Tokens Background -->
 <div class="floating-tokens-container" id="floatingTokensContainer"></div>
-
-<!-- Wallet Selection Modal -->
-<div class="wallet-modal-overlay" id="walletModal">
-  <div class="wallet-modal">
-    <h3>Select Wallet</h3>
-    <div class="wallet-option-list">
-      <div class="wallet-option" data-wallet="metamask"><span>MetaMask / Injected</span> →</div>
-      <div class="wallet-option" data-wallet="trust"><span>Trust Wallet</span> →</div>
-      <div class="wallet-option" data-wallet="coinbase"><span>Coinbase Wallet</span> →</div>
-    </div>
-    <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
-  </div>
-</div>
 
 <nav>
   <div class="logo"><span class="node"></span>AXON</div>
@@ -414,7 +379,7 @@
   </div>
 </section>
 
-<!-- Claim Token Section Added Here -->
+<!-- Claim Token Section -->
 <section class="section" id="claim">
   <div class="section-head">
     <div class="kicker">Token Claim</div>
@@ -485,7 +450,7 @@
 
 <footer>
   <div class="disclaimer">
-    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to afford to lose, and verify all project details independently before contributing.
+    $AXN is a presale token. Cryptocurrency investments are volatile and carry risk, including the risk of total loss. Nothing on this page constitutes financial advice. Participate only with funds you can afford to lose, and verify all project details independently before contributing.
   </div>
   <div>© 2026 AXON. All rights reserved.</div>
 </footer>
@@ -559,7 +524,7 @@
     softBarDenominatorUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
-    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3" // Your deployed AXN token contract
+    axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
   };
 
   const CHAINS = {
@@ -602,8 +567,6 @@
 
   let connectedAccount = null;
   const connectBtn = document.getElementById('connectWalletBtn');
-  const walletModal = document.getElementById('walletModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
 
   async function updateWalletUI(account) {
     connectedAccount = account;
@@ -620,14 +583,10 @@
 
       try {
         claimStatusNote.textContent = 'Checking on-chain token balance...';
-        
         const dataParam = '70a08231000000000000000000000000' + account.replace('0x', '').toLowerCase();
         const res = await window.ethereum.request({
           method: 'eth_call',
-          params: [{
-            to: CONFIG.axonTokenAddress,
-            data: '0x' + dataParam
-          }, 'latest']
+          params: [{ to: CONFIG.axonTokenAddress, data: '0x' + dataParam }, 'latest']
         });
 
         const balanceWei = BigInt(res || '0x0');
@@ -648,7 +607,6 @@
         claimBtn.disabled = true;
         claimStatusNote.textContent = 'Error reading token balance.';
       }
-
     } else {
       connectBtn.textContent = 'Connect Wallet';
       connectBtn.classList.remove('connected');
@@ -658,39 +616,28 @@
     }
   }
 
-  connectBtn.addEventListener('click', () => {
-    walletModal.classList.add('active');
-  });
-
-  closeModalBtn.addEventListener('click', () => {
-    walletModal.classList.remove('active');
-  });
-
-  document.querySelectorAll('.wallet-option').forEach(option => {
-    option.addEventListener('click', async () => {
-      const walletType = option.dataset.wallet;
-      walletModal.classList.remove('active');
-      await connectWallet(walletType);
-    });
-  });
-
-  async function connectWallet(walletType = 'metamask') {
-    let provider = window.ethereum;
-
-    if (!provider) {
-      alert("No Web3 wallet detected.");
+  async function connectWallet() {
+    if (!window.ethereum) {
+      alert("No Web3 wallet detected. Please make sure you are using a Web3-enabled browser or wallet app.");
       return null;
     }
 
     try {
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      await updateWalletUI(accounts[0]);
-      return accounts[0];
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if (accounts && accounts.length > 0) {
+        await updateWalletUI(accounts[0]);
+        return accounts[0];
+      }
     } catch (err) {
+      console.error(err);
       alert('Wallet connection rejected.');
-      return null;
     }
+    return null;
   }
+
+  connectBtn.addEventListener('click', () => {
+    connectWallet();
+  });
 
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
