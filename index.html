@@ -327,9 +327,9 @@
 
 <section class="hero">
   <div class="wrap">
-    <div class="badge"><span class="dot"></span>PRESALE LIVE — Flat price, no stage jumps</div>
+    <div class="badge"><span class="dot"></span>PRESALE LIVE — Softcap: $150K | Hardcap: $1.5M</div>
     <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
-    <p class="hero-sub">AXON ($AXN) presale is now open. One flat price. Pay with ETH, BNB, USDT, MATIC, or USDC.</p>
+    <p class="hero-sub">AXON ($AXN) presale is now open across 10 dynamic pricing rounds. Pay with ETH, BNB, USDT, MATIC, or USDC.</p>
 
     <div class="axon-visual">
       <svg viewBox="0 0 640 64" preserveAspectRatio="none">
@@ -353,8 +353,8 @@
 <div class="wrap">
   <div class="stats">
     <div class="stat"><div class="val" id="statRaised">$109,224</div><div class="lbl">Raised</div></div>
-    <div class="stat"><div class="val" id="statSold">58,252,800</div><div class="lbl">$AXN Sold</div></div>
-    <div class="stat"><div class="val">$0.001875</div><div class="lbl">Price / Token</div></div>
+    <div class="stat"><div class="val" id="statRound">Round 1</div><div class="lbl">Current Stage</div></div>
+    <div class="stat"><div class="val" id="statPrice">$0.001875</div><div class="lbl">Current Price</div></div>
     <div class="stat"><div class="val" id="statHolders">248</div><div class="lbl">Participants</div></div>
   </div>
 </div>
@@ -363,7 +363,7 @@
   <div class="section-head">
     <div class="kicker">Presale</div>
     <h2>Buy $AXN now</h2>
-    <p>Flat presale price — the earlier you buy, the more you hold before listing.</p>
+    <p>Prices increase slightly by $0.0005 each round across 10 stages up to the $1.5M hardcap.</p>
   </div>
 
   <div class="buy-card">
@@ -373,11 +373,11 @@
 
     <div class="presale-bar-wrap">
       <div class="presale-bar-top">
-        <span>Raised so far</span>
+        <span id="roundIndicatorLabel">Round 1 (Target: $150K Softcap)</span>
         <span class="raised mono" id="barRaisedLabel">$109,224</span>
       </div>
       <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
-      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
+      <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
     </div>
 
     <div class="field-label">Pay with</div>
@@ -447,8 +447,8 @@
   </div>
   <div class="faq">
     <details open>
-      <summary>How is my "tokens received" amount calculated?</summary>
-      <p>At the flat presale price of $0.001875 per $AXN, your contribution amount (converted to USD at time of payment) is divided by the token price to estimate your allocation.</p>
+      <summary>How do the 10 rounds and price increases work?</summary>
+      <p>The presale features a hardcap of $1,500,000 divided into 10 rounds (each spanning 10% or $150k increments). Round 1 starts up to the softcap ($150,000). Every subsequent round increases the token price by $0.0005.</p>
     </details>
     <details>
       <summary>When do I receive my tokens?</summary>
@@ -531,10 +531,11 @@
   })();
 
   const CONFIG = {
-    tokenPriceUsd: 0.001875,
+    basePriceUsd: 0.0015,         // Starting base price before round additions
     raisedUsd: 109224,          
     tokensSold: 58252800,          
-    softBarDenominatorUsd: 1500000,
+    softCapUsd: 150000,
+    hardCapUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
     axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
@@ -547,6 +548,17 @@
     usdterc20:    { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
     usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
   };
+
+  function getCurrentRoundAndPrice(raised) {
+    const roundStep = CONFIG.hardCapUsd / 10; // $150,000 per round (10%)
+    let currentRound = Math.floor(raised / roundStep) + 1;
+    if (currentRound > 10) currentRound = 10;
+    if (currentRound < 1) currentRound = 1;
+
+    // Price increases by $0.0005 each round starting from round 2
+    const currentPrice = CONFIG.basePriceUsd + ((currentRound - 1) * 0.0005);
+    return { round: currentRound, price: currentPrice };
+  }
 
   // Persistent storage via localStorage to track increments and timing across reloads/intervals
   function initDynamicStats() {
@@ -567,11 +579,11 @@
     }
 
     if (!lastUpdate || (now - parseInt(lastUpdate, 10)) >= sixteenHoursMs) {
-      // Random increase between $500 and $5,000 USD
       const randomAddUsd = Math.floor(Math.random() * (5000 - 500 + 1)) + 500;
-      const randomAddTokens = Math.round(randomAddUsd / CONFIG.tokenPriceUsd);
+      const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
+      const randomAddTokens = Math.round(randomAddUsd / price);
 
-      CONFIG.raisedUsd += randomAddUsd;
+      CONFIG.raisedUsd = Math.min(CONFIG.hardCapUsd, CONFIG.raisedUsd + randomAddUsd);
       CONFIG.tokensSold += randomAddTokens;
 
       localStorage.setItem(STORAGE_KEY_RAISED, CONFIG.raisedUsd);
@@ -583,12 +595,18 @@
   initDynamicStats();
 
   function updateDisplayStats() {
-    const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+    const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.hardCapUsd) * 100);
+    const { round, price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
+
     document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
     document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
     document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
     document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-    document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
+    document.getElementById('statSold').textContent = 'Round ' + round;
+    document.getElementById('statPrice').textContent = '$' + price.toFixed(6);
+    document.getElementById('roundIndicatorLabel').textContent = `Round ${round} of 10 (Target: $${(round * 150000).toLocaleString()})`;
+    
+    updateReceiveAmount();
   }
 
   updateDisplayStats();
@@ -611,7 +629,8 @@
   function updateReceiveAmount(){
     const amt = parseFloat(amountInput.value) || 0;
     const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
-    const tokens = usdValue / CONFIG.tokenPriceUsd;
+    const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
+    const tokens = usdValue / price;
     receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
   }
   amountInput.addEventListener('input', updateReceiveAmount);
