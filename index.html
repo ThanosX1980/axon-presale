@@ -352,8 +352,8 @@
 
 <div class="wrap">
   <div class="stats">
-    <div class="stat"><div class="val" id="statRaised">$103,752</div><div class="lbl">Raised</div></div>
-    <div class="stat"><div class="val" id="statSold">55,334,400</div><div class="lbl">$AXN Sold</div></div>
+    <div class="stat"><div class="val" id="statRaised">$109,224</div><div class="lbl">Raised</div></div>
+    <div class="stat"><div class="val" id="statSold">58,252,800</div><div class="lbl">$AXN Sold</div></div>
     <div class="stat"><div class="val">$0.001875</div><div class="lbl">Price / Token</div></div>
     <div class="stat"><div class="val" id="statHolders">248</div><div class="lbl">Participants</div></div>
   </div>
@@ -374,10 +374,10 @@
     <div class="presale-bar-wrap">
       <div class="presale-bar-top">
         <span>Raised so far</span>
-        <span class="raised mono" id="barRaisedLabel">$103,752</span>
+        <span class="raised mono" id="barRaisedLabel">$109,224</span>
       </div>
       <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
-      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">55,334,400 $AXN</span></div>
+      <div class="price-row"><span>Tokens sold</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
     </div>
 
     <div class="field-label">Pay with</div>
@@ -532,8 +532,8 @@
 
   const CONFIG = {
     tokenPriceUsd: 0.001875,
-    raisedUsd: 103752,          
-    tokensSold: 55334400,          
+    raisedUsd: 109224,          /* Previous $103,752 + $5,472 = $109,224 */
+    tokensSold: 58252800,       /* Previous 55,334,400 + ($5,472 / 0.001875 = 2,918,400) = 58,252,800 */
     softBarDenominatorUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
