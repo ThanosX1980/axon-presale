@@ -532,8 +532,8 @@
 
   const CONFIG = {
     tokenPriceUsd: 0.001875,
-    raisedUsd: 109224,          /* Previous $103,752 + $5,472 = $109,224 */
-    tokensSold: 58252800,       /* Previous 55,334,400 + ($5,472 / 0.001875 = 2,918,400) = 58,252,800 */
+    raisedUsd: 109224,          
+    tokensSold: 58252800,          
     softBarDenominatorUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
     createPaymentEndpoint: "/api/create-payment",
@@ -548,12 +548,50 @@
     usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
   };
 
-  const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
-  document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
-  document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-  document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
-  document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-  document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
+  // Persistent storage via localStorage to track increments and timing across reloads/intervals
+  function initDynamicStats() {
+    const STORAGE_KEY_RAISED = 'axon_presale_raised';
+    const STORAGE_KEY_SOLD = 'axon_presale_sold';
+    const STORAGE_KEY_TIME = 'axon_presale_last_update';
+
+    let storedRaised = localStorage.getItem(STORAGE_KEY_RAISED);
+    let storedSold = localStorage.getItem(STORAGE_KEY_SOLD);
+    let lastUpdate = localStorage.getItem(STORAGE_KEY_TIME);
+
+    const now = Date.now();
+    const sixteenHoursMs = 16 * 60 * 60 * 1000;
+
+    if (storedRaised && storedSold) {
+      CONFIG.raisedUsd = parseFloat(storedRaised);
+      CONFIG.tokensSold = parseInt(storedSold, 10);
+    }
+
+    if (!lastUpdate || (now - parseInt(lastUpdate, 10)) >= sixteenHoursMs) {
+      // Random increase between $500 and $5,000 USD
+      const randomAddUsd = Math.floor(Math.random() * (5000 - 500 + 1)) + 500;
+      const randomAddTokens = Math.round(randomAddUsd / CONFIG.tokenPriceUsd);
+
+      CONFIG.raisedUsd += randomAddUsd;
+      CONFIG.tokensSold += randomAddTokens;
+
+      localStorage.setItem(STORAGE_KEY_RAISED, CONFIG.raisedUsd);
+      localStorage.setItem(STORAGE_KEY_SOLD, CONFIG.tokensSold);
+      localStorage.setItem(STORAGE_KEY_TIME, now);
+    }
+  }
+
+  initDynamicStats();
+
+  function updateDisplayStats() {
+    const fillPct = Math.min(100, (CONFIG.raisedUsd / CONFIG.softBarDenominatorUsd) * 100);
+    document.getElementById('presaleFill').style.setProperty('--fill', fillPct.toFixed(1) + '%');
+    document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+    document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
+    document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
+    document.getElementById('statSold').textContent = CONFIG.tokensSold.toLocaleString();
+  }
+
+  updateDisplayStats();
 
   let selectedTicker = 'eth'; 
   const payOpts = document.querySelectorAll('.pay-opt');
