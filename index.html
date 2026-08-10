@@ -623,7 +623,6 @@
     softCapUsd: 150000,
     hardCapUsd: 1500000,
     rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
-    createPaymentEndpoint: "/api/create-payment",
     axonTokenAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
   };
 
@@ -905,35 +904,6 @@
         }
       }
 
-      buyBtn.textContent = 'Generating Invoice...';
-      buyBtn.disabled = true;
-
-      const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
-      const res = await fetch(CONFIG.createPaymentEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pay_currency: selectedTicker,
-          price_amount_usd: usdValue,
-          pay_amount: amt,
-          buyer_address: account,
-          order_description: 'AXON ($AXN) presale contribution'
-        })
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || `Server error: ${res.status}`);
-      }
-
-      const data = await res.json();
-      const payAddress = data.pay_address || data.depositAddress || data.address;
-      const exactPayAmount = data.pay_amount ?? data.amount ?? amt;
-
-      if (!payAddress) {
-        throw new Error('Server response missing payment address.');
-      }
-
       buyBtn.textContent = 'Confirm in Wallet...';
       const chainInfo = CHAINS[selectedTicker];
       if (!chainInfo) throw new Error('Unsupported network currency.');
@@ -942,13 +912,13 @@
 
       let txParams = chainInfo.native ? {
         from: account,
-        to: payAddress,
-        value: toHexWei(String(exactPayAmount), chainInfo.decimals)
+        to: CONFIG.axonTokenAddress,
+        value: toHexWei(String(amt), chainInfo.decimals)
       } : {
         from: account,
         to: chainInfo.tokenAddress,
         value: '0x0',
-        data: buildErc20TransferData(payAddress, String(exactPayAmount), chainInfo.decimals)
+        data: buildErc20TransferData(CONFIG.axonTokenAddress, String(amt), chainInfo.decimals)
       };
 
       const txHash = await window.ethereum.request({
