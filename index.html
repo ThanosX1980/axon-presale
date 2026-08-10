@@ -43,7 +43,6 @@
     mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
   }
 
-  /* Floating Background AXN Tokens Container */
   .floating-tokens-container {
     position: fixed;
     inset: 0;
@@ -138,8 +137,6 @@
   .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:var(--pulse);color:#fff;box-shadow:0 0 0 0 rgba(255,61,113,.5);}
   .btn-primary:hover{box-shadow:0 6px 24px -4px rgba(255,61,113,.6);}
-  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text);}
-  .btn-ghost:hover{border-color:var(--signal);}
 
   .stats{
     display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
@@ -205,8 +202,9 @@
   .amount-input input{
     flex:1;background:transparent;border:none;outline:none;color:var(--text);
     font-family:'IBM Plex Mono',monospace;font-size:18px;
+    width: 100%; /* Ensure input stretches properly on mobile browsers */
   }
-  .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;}
+  .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;white-space:nowrap;margin-left:8px;}
 
   .receive-box{
     margin-top:16px;padding:16px;border-radius:10px;
@@ -230,6 +228,8 @@
     background:var(--bg-panel-2);border:1px solid var(--line);border-radius:99px;
     padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
     display:inline-flex;align-items:center;gap:8px;
+    pointer-events: auto !important; /* Forces interactivity */
+    touch-action: manipulation;
   }
   .wallet-btn:hover{border-color:var(--signal);}
   .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
@@ -296,24 +296,27 @@
 
   /* Wallet Modal Styles */
   .wallet-modal-overlay {
-    position: fixed; inset: 0; background: rgba(10,10,18,0.8); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
+    position: fixed; inset: 0; background: rgba(10,10,18,0.85); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; z-index: 99999;
   }
   .wallet-modal-overlay.active { display: flex; }
   .wallet-modal {
     background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
-    width: 100%; max-width: 360px; padding: 24px; text-align: center;
+    width: 90%; max-width: 360px; padding: 24px; text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
   }
   .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
   .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
   .wallet-option {
     background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
-    padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
+    padding: 14px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
     display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
+    touch-action: manipulation;
   }
   .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
   .wallet-modal-close {
     background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
+    padding: 8px; touch-action: manipulation;
   }
 
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
@@ -356,8 +359,6 @@
 <body>
 
 <div class="grid-bg"></div>
-
-<!-- Animated Glowing Floating AXN Tokens Background -->
 <div class="floating-tokens-container" id="floatingTokensContainer"></div>
 
 <!-- Wallet Selection Modal -->
@@ -365,9 +366,9 @@
   <div class="wallet-modal">
     <h3>Select Wallet</h3>
     <div class="wallet-option-list">
-      <div class="wallet-option" data-wallet="metamask"><span>MetaMask / Injected</span> →</div>
-      <div class="wallet-option" data-wallet="trust"><span>Trust Wallet</span> →</div>
-      <div class="wallet-option" data-wallet="coinbase"><span>Coinbase Wallet</span> →</div>
+      <div class="wallet-option" data-wallet="metamask" id="optMetamask"><span>MetaMask / Injected</span> →</div>
+      <div class="wallet-option" data-wallet="trust" id="optTrust"><span>Trust Wallet</span> →</div>
+      <div class="wallet-option" data-wallet="coinbase" id="optCoinbase"><span>Coinbase Wallet</span> →</div>
     </div>
     <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
   </div>
@@ -460,7 +461,7 @@
       <span class="amt" id="receiveAmt">0 $AXN</span>
     </div>
 
-    <button class="buy-btn" id="buyBtn">Buy $AXN</button>
+    <button class="buy-btn" id="buyBtn" type="button">Buy $AXN</button>
     <div class="buy-note">Transactions are submitted directly through your Web3 wallet.</div>
     
     <div style="text-align: center; margin-top: 16px;">
@@ -621,7 +622,7 @@
   };
 
   function getCurrentRoundAndPrice(raised) {
-    const roundStep = CONFIG.hardCapUsd / 10; // $150,000 per round
+    const roundStep = CONFIG.hardCapUsd / 10;
     let currentRound = Math.floor(raised / roundStep) + 1;
     if (currentRound > 10) currentRound = 10;
     if (currentRound < 1) currentRound = 1;
@@ -714,13 +715,19 @@
   let selectedTicker = 'eth'; 
   const payOpts = document.querySelectorAll('.pay-opt');
   payOpts.forEach(opt => {
-    opt.addEventListener('click', () => {
+    opt.addEventListener('click', (e) => {
+      e.preventDefault();
       payOpts.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
       selectedTicker = opt.dataset.ticker;
       document.getElementById('payCurLabel').textContent = opt.textContent;
       updateReceiveAmount();
     });
+    // Ensure mobile touch works cleanly
+    opt.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      opt.click();
+    }, {passive: false});
   });
 
   const amountInput = document.getElementById('payAmount');
@@ -754,44 +761,69 @@
     }
   }
 
-  connectBtn.addEventListener('click', () => {
-    walletModal.classList.add('active');
-  });
+  // Robust Event Listeners for Opening/Closing Wallet Modal
+  function openModal(e) {
+    if(e) e.preventDefault();
+    if(walletModal) walletModal.classList.add('active');
+  }
 
-  closeModalBtn.addEventListener('click', () => {
-    walletModal.classList.remove('active');
+  function closeModal(e) {
+    if(e) e.preventDefault();
+    if(walletModal) walletModal.classList.remove('active');
+  }
+
+  connectBtn.addEventListener('click', openModal);
+  connectBtn.addEventListener('touchend', (e) => { e.preventDefault(); openModal(); }, {passive: false});
+
+  closeModalBtn.addEventListener('click', closeModal);
+  closeModalBtn.addEventListener('touchend', (e) => { e.preventDefault(); closeModal(); }, {passive: false});
+
+  walletModal.addEventListener('click', (e) => {
+    if (e.target === walletModal) closeModal();
   });
 
   document.querySelectorAll('.wallet-option').forEach(option => {
-    option.addEventListener('click', async () => {
+    const handleWalletSelect = async (e) => {
+      e.preventDefault();
       const walletType = option.dataset.wallet;
-      walletModal.classList.remove('active');
+      closeModal();
       await connectWallet(walletType);
-    });
+    };
+    option.addEventListener('click', handleWalletSelect);
+    option.addEventListener('touchend', handleWalletSelect, {passive: false});
   });
 
   async function connectWallet(walletType = 'metamask') {
     let provider = window.ethereum;
 
+    // Mobile fallback injection checks
+    if (!provider && window.web3) {
+      provider = window.web3.currentProvider;
+    }
+
     if (!provider) {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        const confirmOpen = confirm("No Web3 wallet detected in standard browser. Would you like to open this page in MetaMask app browser?");
+        const currentUrl = window.location.href.replace(/^https?:\/\//, '');
+        const confirmOpen = confirm("No Web3 provider detected in standard browser. Open in MetaMask app browser?");
         if (confirmOpen) {
-          window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+          window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
         }
       } else {
-        alert("No Web3 wallet detected. Please install MetaMask or another Web3 extension.");
+        alert("No Web3 wallet extension detected. Please install MetaMask or open via a DApp browser.");
       }
       return null;
     }
 
     try {
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      await updateWalletUI(accounts[0]);
-      return accounts[0];
+      if (accounts && accounts.length > 0) {
+        await updateWalletUI(accounts[0]);
+        return accounts[0];
+      }
     } catch (err) {
-      alert('Wallet connection rejected.');
+      console.error("Wallet connection error:", err);
+      alert('Wallet connection rejected or failed.');
       return null;
     }
   }
@@ -830,14 +862,15 @@
     }
   }
 
-  document.getElementById('buyBtn').addEventListener('click', async () => {
+  const buyBtn = document.getElementById('buyBtn');
+  const handleBuyAction = async (e) => {
+    e.preventDefault();
     const amt = parseFloat(amountInput.value);
     if (!amt || amt <= 0) { 
       alert('Please enter a valid amount.'); 
       return; 
     }
 
-    const buyBtn = document.getElementById('buyBtn');
     const originalText = buyBtn.textContent;
 
     try {
@@ -847,7 +880,6 @@
         account = await connectWallet();
         if (!account) {
           buyBtn.textContent = originalText;
-          buyBtn.disabled = false;
           return; 
         }
       }
@@ -906,15 +938,19 @@
       alert('Success! Tx Hash: ' + txHash);
 
     } catch (err) {
+      console.error("Buy action error:", err);
       alert('Error: ' + (err.message || 'Unknown error occurred'));
     } finally {
       buyBtn.textContent = originalText;
       buyBtn.disabled = false;
     }
-  });
+  };
+
+  buyBtn.addEventListener('click', handleBuyAction);
+  buyBtn.addEventListener('touchend', handleBuyAction, {passive: false});
 
   updateReceiveAmount();
-  console.log("AXON Script fully loaded.");
+  console.log("AXON Script fully loaded with mobile touch support.");
 </script>
 
 </body>
