@@ -186,6 +186,23 @@
   .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-top:10px;}
   .price-row .mono{color:var(--text);}
 
+  /* Stage Progression Grid */
+  .stages-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:20px 0;
+  }
+  .stage-node{
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;
+    padding:8px 4px;text-align:center;font-size:11px;color:var(--text-dim);
+  }
+  .stage-node .snum{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;color:var(--text);}
+  .stage-node.active{
+    border-color:var(--signal);background:rgba(139,127,255,.12);color:var(--signal-2);
+  }
+  .stage-node.active .snum{color:var(--signal-2);}
+  .stage-node.completed{
+    border-color:rgba(94,230,200,.4);color:var(--signal-2);opacity:.75;
+  }
+
   .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
   .pay-select{
     display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
@@ -378,6 +395,21 @@
       </div>
       <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
       <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
+    </div>
+
+    <!-- Stage 1-10 Visual Progress Bar Grid -->
+    <div class="field-label">Presale Stages (1 - 10)</div>
+    <div class="stages-grid" id="stagesGrid">
+      <div class="stage-node active" data-stage="1"><div class="snum">St 1</div></div>
+      <div class="stage-node" data-stage="2"><div class="snum">St 2</div></div>
+      <div class="stage-node" data-stage="3"><div class="snum">St 3</div></div>
+      <div class="stage-node" data-stage="4"><div class="snum">St 4</div></div>
+      <div class="stage-node" data-stage="5"><div class="snum">St 5</div></div>
+      <div class="stage-node" data-stage="6"><div class="snum">St 6</div></div>
+      <div class="stage-node" data-stage="7"><div class="snum">St 7</div></div>
+      <div class="stage-node" data-stage="8"><div class="snum">St 8</div></div>
+      <div class="stage-node" data-stage="9"><div class="snum">St 9</div></div>
+      <div class="stage-node" data-stage="10"><div class="snum">St 10</div></div>
     </div>
 
     <div class="field-label">Pay with</div>
@@ -602,10 +634,22 @@
     document.getElementById('barRaisedLabel').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
     document.getElementById('barSoldLabel').textContent = CONFIG.tokensSold.toLocaleString() + ' $AXN';
     document.getElementById('statRaised').textContent = '$' + CONFIG.raisedUsd.toLocaleString();
-    document.getElementById('statSold').textContent = 'Round ' + round;
+    document.getElementById('statRound').textContent = 'Round ' + round;
     document.getElementById('statPrice').textContent = '$' + price.toFixed(6);
     document.getElementById('roundIndicatorLabel').textContent = `Round ${round} of 10 (Target: $${(round * 150000).toLocaleString()})`;
     
+    // Update stage grid nodes active/completed status
+    const stageNodes = document.querySelectorAll('.stage-node');
+    stageNodes.forEach(node => {
+      const sNum = parseInt(node.dataset.stage, 10);
+      node.classList.remove('active', 'completed');
+      if (sNum < round) {
+        node.classList.add('completed');
+      } else if (sNum === round) {
+        node.classList.add('active');
+      }
+    });
+
     updateReceiveAmount();
   }
 
