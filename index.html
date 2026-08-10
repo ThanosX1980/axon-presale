@@ -157,8 +157,9 @@
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
   .section-head p{color:var(--text-dim);margin-top:10px;}
 
+  /* Presale Buy Card */
   .buy-card{
-    max-width:480px;margin:0 auto;
+    max-width:480px;margin:0 auto 64px;
     background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
     padding:28px;position:relative;
   }
@@ -186,29 +187,12 @@
   .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-top:10px;}
   .price-row .mono{color:var(--text);}
 
-  /* Stage Progression Grid */
-  .stages-grid{
-    display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:20px 0;
-  }
-  .stage-node{
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;
-    padding:8px 4px;text-align:center;font-size:11px;color:var(--text-dim);
-  }
-  .stage-node .snum{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;color:var(--text);}
-  .stage-node.active{
-    border-color:var(--signal);background:rgba(139,127,255,.12);color:var(--signal-2);
-  }
-  .stage-node.active .snum{color:var(--signal-2);}
-  .stage-node.completed{
-    border-color:rgba(94,230,200,.4);color:var(--signal-2);opacity:.75;
-  }
-
   .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
   .pay-select{
     display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
   }
   .pay-opt{
-    border:1px solid var(--line);background:var(--bg-panel-2);border-radius:9px;
+    border:1px solid var(--line);background:var(--bg-panel-2);border-radius:99px;
     padding:10px 4px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
     color:var(--text-dim);transition:all .15s ease;
   }
@@ -243,7 +227,7 @@
 
   .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
   .wallet-btn{
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:9px;
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:99px;
     padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
     display:inline-flex;align-items:center;gap:8px;
   }
@@ -251,6 +235,64 @@
   .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
   .wallet-btn .wdot{width:7px;height:7px;border-radius:50%;background:var(--text-dimmer);}
   .wallet-btn.connected .wdot{background:var(--signal-2);box-shadow:0 0 6px var(--signal-2);}
+
+  /* Presale Stages Grid Styles */
+  .stages-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .stage-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  .stage-card.active {
+    border-color: var(--signal-2);
+    box-shadow: 0 0 16px rgba(94, 230, 200, 0.15);
+    background: radial-gradient(circle at top, rgba(94, 230, 200, 0.08) 0%, var(--bg-panel) 70%);
+  }
+  .stage-card.completed {
+    border-color: rgba(139, 127, 255, 0.3);
+    opacity: 0.75;
+  }
+  .stage-num {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .stage-card.active .stage-num { color: var(--signal-2); }
+  .stage-price {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .stage-status {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .stage-card.completed .stage-status { background: rgba(139, 127, 255, 0.15); color: var(--signal); }
+  .stage-card.active .stage-status { background: rgba(94, 230, 200, 0.2); color: var(--signal-2); }
+  .stage-card.upcoming .stage-status { background: var(--bg-panel-2); color: var(--text-dimmer); }
+
+  @media(max-width:900px){ .stages-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media(max-width:480px){ .stages-grid { grid-template-columns: 1fr; } }
 
   /* Wallet Modal Styles */
   .wallet-modal-overlay {
@@ -335,6 +377,7 @@
   <div class="logo"><span class="node"></span>AXON</div>
   <div class="nav-links">
     <a href="#buy">Presale</a>
+    <a href="#stages">Stages</a>
     <a href="#how">How to Buy</a>
     <a href="#tokenomics">Tokenomics</a>
     <a href="#faq">FAQ</a>
@@ -397,21 +440,6 @@
       <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
     </div>
 
-    <!-- Stage 1-10 Visual Progress Bar Grid -->
-    <div class="field-label">Presale Stages (1 - 10)</div>
-    <div class="stages-grid" id="stagesGrid">
-      <div class="stage-node active" data-stage="1"><div class="snum">St 1</div></div>
-      <div class="stage-node" data-stage="2"><div class="snum">St 2</div></div>
-      <div class="stage-node" data-stage="3"><div class="snum">St 3</div></div>
-      <div class="stage-node" data-stage="4"><div class="snum">St 4</div></div>
-      <div class="stage-node" data-stage="5"><div class="snum">St 5</div></div>
-      <div class="stage-node" data-stage="6"><div class="snum">St 6</div></div>
-      <div class="stage-node" data-stage="7"><div class="snum">St 7</div></div>
-      <div class="stage-node" data-stage="8"><div class="snum">St 8</div></div>
-      <div class="stage-node" data-stage="9"><div class="snum">St 9</div></div>
-      <div class="stage-node" data-stage="10"><div class="snum">St 10</div></div>
-    </div>
-
     <div class="field-label">Pay with</div>
     <div class="pay-select" id="paySelect">
       <div class="pay-opt active" data-ticker="eth">ETH</div>
@@ -440,6 +468,17 @@
         Verify Contract on BscScan ↗
       </a>
     </div>
+  </div>
+
+  <!-- Presale Stages Grid Section -->
+  <div class="section-head" id="stages" style="margin-top: 40px;">
+    <div class="kicker">Structure</div>
+    <h2>10-Stage Presale Schedule</h2>
+    <p>Each stage represents $150,000 raised. Watch your stage status update in real time.</p>
+  </div>
+
+  <div class="stages-grid" id="stagesGrid">
+    <!-- Rendered dynamically by JavaScript -->
   </div>
 </section>
 
@@ -563,7 +602,7 @@
   })();
 
   const CONFIG = {
-    basePriceUsd: 0.0015,         // Starting base price before round additions
+    basePriceUsd: 0.001875,
     raisedUsd: 109224,          
     tokensSold: 58252800,          
     softCapUsd: 150000,
@@ -582,17 +621,45 @@
   };
 
   function getCurrentRoundAndPrice(raised) {
-    const roundStep = CONFIG.hardCapUsd / 10; // $150,000 per round (10%)
+    const roundStep = CONFIG.hardCapUsd / 10; // $150,000 per round
     let currentRound = Math.floor(raised / roundStep) + 1;
     if (currentRound > 10) currentRound = 10;
     if (currentRound < 1) currentRound = 1;
 
-    // Price increases by $0.0005 each round starting from round 2
     const currentPrice = CONFIG.basePriceUsd + ((currentRound - 1) * 0.0005);
     return { round: currentRound, price: currentPrice };
   }
 
-  // Persistent storage via localStorage to track increments and timing across reloads/intervals
+  function renderStagesGrid(currentRound) {
+    const stagesGrid = document.getElementById('stagesGrid');
+    if (!stagesGrid) return;
+    stagesGrid.innerHTML = '';
+
+    for (let r = 1; r <= 10; r++) {
+      const price = (CONFIG.basePriceUsd + ((r - 1) * 0.0005)).toFixed(6);
+      const card = document.createElement('div');
+      
+      let statusClass = 'upcoming';
+      let statusText = 'Upcoming';
+
+      if (r < currentRound) {
+        statusClass = 'completed';
+        statusText = 'Completed';
+      } else if (r === currentRound) {
+        statusClass = 'active';
+        statusText = 'Live Now';
+      }
+
+      card.className = `stage-card ${statusClass}`;
+      card.innerHTML = `
+        <div class="stage-num">Stage ${r}</div>
+        <div class="stage-price">$${price}</div>
+        <div class="stage-status">${statusText}</div>
+      `;
+      stagesGrid.appendChild(card);
+    }
+  }
+
   function initDynamicStats() {
     const STORAGE_KEY_RAISED = 'axon_presale_raised';
     const STORAGE_KEY_SOLD = 'axon_presale_sold';
@@ -638,18 +705,7 @@
     document.getElementById('statPrice').textContent = '$' + price.toFixed(6);
     document.getElementById('roundIndicatorLabel').textContent = `Round ${round} of 10 (Target: $${(round * 150000).toLocaleString()})`;
     
-    // Update stage grid nodes active/completed status
-    const stageNodes = document.querySelectorAll('.stage-node');
-    stageNodes.forEach(node => {
-      const sNum = parseInt(node.dataset.stage, 10);
-      node.classList.remove('active', 'completed');
-      if (sNum < round) {
-        node.classList.add('completed');
-      } else if (sNum === round) {
-        node.classList.add('active');
-      }
-    });
-
+    renderStagesGrid(round);
     updateReceiveAmount();
   }
 
