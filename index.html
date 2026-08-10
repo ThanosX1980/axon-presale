@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AXON ($AXN) — Presale</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
     --text-dim:#8a89a3;
     --text-dimmer:#54536b;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
   body{
     background:var(--bg);
@@ -133,6 +133,7 @@
   .btn{
     padding:14px 28px;border-radius:99px;font-weight:600;font-size:15px;cursor:pointer;
     border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease;
+    position: relative; z-index: 5;
   }
   .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:var(--pulse);color:#fff;box-shadow:0 0 0 0 rgba(255,61,113,.5);}
@@ -159,6 +160,7 @@
     max-width:480px;margin:0 auto 64px;
     background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
     padding:28px;position:relative;
+    z-index: 5;
   }
   .presale-bar-wrap{margin-bottom:24px;}
   .presale-bar-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;}
@@ -187,22 +189,26 @@
   .field-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;}
   .pay-select{
     display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;
+    position: relative; z-index: 10;
   }
   .pay-opt{
     border:1px solid var(--line);background:var(--bg-panel-2);border-radius:99px;
-    padding:10px 4px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
+    padding:12px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
     color:var(--text-dim);transition:all .15s ease;
+    user-select:none;
+    -webkit-user-select:none;
   }
   .pay-opt.active{border-color:var(--signal);color:var(--signal-2);background:rgba(139,127,255,.08);}
 
   .amount-input{
     display:flex;align-items:center;border:1px solid var(--line);background:var(--bg-panel-2);
     border-radius:10px;padding:14px 16px;margin-top:4px;
+    position: relative; z-index: 10;
   }
   .amount-input input{
     flex:1;background:transparent;border:none;outline:none;color:var(--text);
     font-family:'IBM Plex Mono',monospace;font-size:18px;
-    width: 100%; /* Ensure input stretches properly on mobile browsers */
+    width: 100%;
   }
   .amount-input .cur{color:var(--text-dim);font-size:14px;font-weight:600;white-space:nowrap;margin-left:8px;}
 
@@ -218,18 +224,22 @@
     width:100%;margin-top:20px;padding:16px;border:none;border-radius:10px;
     background:var(--pulse);color:#fff;font-weight:700;font-size:16px;cursor:pointer;
     transition:box-shadow .15s ease, transform .15s ease;
+    position: relative; z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
   .buy-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
   .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
 
-  .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
+  .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;position:relative;z-index:10;}
   .wallet-btn{
     background:var(--bg-panel-2);border:1px solid var(--line);border-radius:99px;
-    padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
+    padding:12px 20px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;
     display:inline-flex;align-items:center;gap:8px;
-    pointer-events: auto !important; /* Forces interactivity */
-    touch-action: manipulation;
+    position: relative; z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .wallet-btn:hover{border-color:var(--signal);}
   .wallet-btn.connected{border-color:var(--signal-2);color:var(--signal-2);}
@@ -297,13 +307,14 @@
   /* Wallet Modal Styles */
   .wallet-modal-overlay {
     position: fixed; inset: 0; background: rgba(10,10,18,0.85); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 99999;
+    display: none; align-items: center; justify-content: center; z-index: 999999;
   }
   .wallet-modal-overlay.active { display: flex; }
   .wallet-modal {
     background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
     width: 90%; max-width: 360px; padding: 24px; text-align: center;
     box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    position: relative; z-index: 1000000;
   }
   .wallet-modal h3 { font-size: 18px; margin-bottom: 16px; }
   .wallet-option-list { display: flex; flex-direction: column; gap: 10px; }
@@ -311,12 +322,15 @@
     background: var(--bg-panel-2); border: 1px solid var(--line); border-radius: 10px;
     padding: 14px 16px; font-weight: 600; font-size: 14px; color: var(--text); cursor: pointer;
     display: flex; align-items: center; justify-content: space-between; transition: border-color .15s ease;
-    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .wallet-option:hover { border-color: var(--signal); color: var(--signal-2); }
   .wallet-modal-close {
     background: transparent; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer; font-size: 13px;
-    padding: 8px; touch-action: manipulation;
+    padding: 8px;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1000px;margin:0 auto;}
@@ -363,7 +377,7 @@
 
 <!-- Wallet Selection Modal -->
 <div class="wallet-modal-overlay" id="walletModal">
-  <div class="wallet-modal">
+  <div class="wallet-modal" id="walletModalInner">
     <h3>Select Wallet</h3>
     <div class="wallet-option-list">
       <div class="wallet-option" data-wallet="metamask" id="optMetamask"><span>MetaMask / Injected</span> →</div>
@@ -464,7 +478,7 @@
     <button class="buy-btn" id="buyBtn" type="button">Buy $AXN</button>
     <div class="buy-note">Transactions are submitted directly through your Web3 wallet.</div>
     
-    <div style="text-align: center; margin-top: 16px;">
+    <div style="text-align: center; margin-top: 16px; position: relative; z-index: 10;">
       <a href="https://bscscan.com/address/0xC7C101be3e01258A4e6111273a412656E36Cd1a3" target="_blank" style="font-size: 12px; color: var(--signal-2); text-decoration: underline;">
         Verify Contract on BscScan ↗
       </a>
@@ -715,19 +729,16 @@
   let selectedTicker = 'eth'; 
   const payOpts = document.querySelectorAll('.pay-opt');
   payOpts.forEach(opt => {
-    opt.addEventListener('click', (e) => {
-      e.preventDefault();
+    const handleSelect = (e) => {
+      if (e) e.preventDefault();
       payOpts.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
       selectedTicker = opt.dataset.ticker;
       document.getElementById('payCurLabel').textContent = opt.textContent;
       updateReceiveAmount();
-    });
-    // Ensure mobile touch works cleanly
-    opt.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      opt.click();
-    }, {passive: false});
+    };
+    opt.addEventListener('click', handleSelect);
+    opt.addEventListener('touchend', handleSelect, {passive: false});
   });
 
   const amountInput = document.getElementById('payAmount');
@@ -761,32 +772,40 @@
     }
   }
 
-  // Robust Event Listeners for Opening/Closing Wallet Modal
   function openModal(e) {
-    if(e) e.preventDefault();
-    if(walletModal) walletModal.classList.add('active');
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (walletModal) walletModal.classList.add('active');
   }
 
   function closeModal(e) {
-    if(e) e.preventDefault();
-    if(walletModal) walletModal.classList.remove('active');
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (walletModal) walletModal.classList.remove('active');
   }
 
   connectBtn.addEventListener('click', openModal);
-  connectBtn.addEventListener('touchend', (e) => { e.preventDefault(); openModal(); }, {passive: false});
+  connectBtn.addEventListener('touchend', openModal, {passive: false});
 
   closeModalBtn.addEventListener('click', closeModal);
-  closeModalBtn.addEventListener('touchend', (e) => { e.preventDefault(); closeModal(); }, {passive: false});
+  closeModalBtn.addEventListener('touchend', closeModal, {passive: false});
 
   walletModal.addEventListener('click', (e) => {
-    if (e.target === walletModal) closeModal();
+    if (e.target === walletModal) closeModal(e);
   });
 
   document.querySelectorAll('.wallet-option').forEach(option => {
     const handleWalletSelect = async (e) => {
-      e.preventDefault();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const walletType = option.dataset.wallet;
-      closeModal();
+      closeModal(e);
       await connectWallet(walletType);
     };
     option.addEventListener('click', handleWalletSelect);
@@ -796,7 +815,6 @@
   async function connectWallet(walletType = 'metamask') {
     let provider = window.ethereum;
 
-    // Mobile fallback injection checks
     if (!provider && window.web3) {
       provider = window.web3.currentProvider;
     }
@@ -864,7 +882,10 @@
 
   const buyBtn = document.getElementById('buyBtn');
   const handleBuyAction = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const amt = parseFloat(amountInput.value);
     if (!amt || amt <= 0) { 
       alert('Please enter a valid amount.'); 
@@ -950,7 +971,7 @@
   buyBtn.addEventListener('touchend', handleBuyAction, {passive: false});
 
   updateReceiveAmount();
-  console.log("AXON Script fully loaded with mobile touch support.");
+  console.log("AXON Script fully loaded with fixed z-index and touch event bindings.");
 </script>
 
 </body>
