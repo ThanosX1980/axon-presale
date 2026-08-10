@@ -157,7 +157,7 @@
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
   .section-head p{color:var(--text-dim);margin-top:10px;}
 
-  .buy-card, .claim-card{
+  .buy-card{
     max-width:480px;margin:0 auto;
     background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
     padding:28px;position:relative;
@@ -215,14 +215,13 @@
   .receive-box .lbl{font-size:12px;color:var(--text-dim);}
   .receive-box .amt{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;color:var(--signal-2);}
 
-  .buy-btn, .claim-btn{
+  .buy-btn{
     width:100%;margin-top:20px;padding:16px;border:none;border-radius:10px;
     background:var(--pulse);color:#fff;font-weight:700;font-size:16px;cursor:pointer;
     transition:box-shadow .15s ease, transform .15s ease;
   }
-  .claim-btn{ background:var(--signal); color:#0a0a12; }
-  .buy-btn:hover, .claim-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
-  .buy-btn:disabled, .claim-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+  .buy-btn:hover{box-shadow:0 8px 28px -6px rgba(255,61,113,.55);transform:translateY(-1px);}
+  .buy-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
   .buy-note{font-size:11.5px;color:var(--text-dimmer);text-align:center;margin-top:12px;}
 
   .wallet-connect-row{display:flex;justify-content:center;margin-bottom:16px;}
@@ -319,7 +318,6 @@
   <div class="logo"><span class="node"></span>AXON</div>
   <div class="nav-links">
     <a href="#buy">Presale</a>
-    <a href="#claim">Claim</a>
     <a href="#how">How to Buy</a>
     <a href="#tokenomics">Tokenomics</a>
     <a href="#faq">FAQ</a>
@@ -348,7 +346,6 @@
 
     <div class="hero-ctas">
       <a href="#buy" class="btn btn-primary">Join the presale</a>
-      <a href="#claim" class="btn btn-ghost">Claim Tokens</a>
     </div>
   </div>
 </section>
@@ -411,25 +408,6 @@
         Verify Contract on BscScan ↗
       </a>
     </div>
-  </div>
-</section>
-
-<!-- Claim Token Section -->
-<section class="section" id="claim">
-  <div class="section-head">
-    <div class="kicker">Token Claim</div>
-    <h2>Claim your $AXN</h2>
-    <p>Connect your contributing wallet to view and claim your purchased tokens.</p>
-  </div>
-
-  <div class="claim-card">
-    <div class="receive-box" style="margin-bottom: 20px;">
-      <span class="lbl">Claimable Balance</span>
-      <span class="amt" id="claimableBalance">0 $AXN</span>
-    </div>
-
-    <button class="claim-btn" id="claimBtn" disabled>Claim $AXN Tokens</button>
-    <div class="buy-note" id="claimStatusNote">Connect wallet above to check allocation.</div>
   </div>
 </section>
 
@@ -607,58 +585,15 @@
 
   async function updateWalletUI(account) {
     connectedAccount = account;
-    const claimBtn = document.getElementById('claimBtn');
-    const claimBalanceEl = document.getElementById('claimableBalance');
-    const claimStatusNote = document.getElementById('claimStatusNote');
-
     if (account) {
       connectBtn.textContent = account.slice(0,6) + '…' + account.slice(-4);
       connectBtn.classList.add('connected');
       if (!connectBtn.querySelector('.wdot')) {
         connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
       }
-
-      try {
-        claimStatusNote.textContent = 'Checking on-chain token balance...';
-        
-        // Safely check balance using standard eth_call balanceOf(address)
-        const dataParam = '70a08231000000000000000000000000' + account.replace('0x', '').toLowerCase();
-        
-        let res = '0x0';
-        try {
-          res = await window.ethereum.request({
-            method: 'eth_call',
-            params: [{
-              to: CONFIG.axonTokenAddress,
-              data: '0x' + dataParam
-            }, 'latest']
-          });
-        } catch (rpcErr) {
-          console.warn("RPC balance check failed, falling back to 0 balance without throwing block error:", rpcErr);
-        }
-
-        const balanceWei = BigInt(res || '0x0');
-        const tokenBalance = Number(balanceWei / BigInt(10 ** 18));
-
-        claimBalanceEl.textContent = tokenBalance.toLocaleString() + ' $AXN';
-        
-        // Temporarily or conditionally enable claim button for testing/interaction even if balance is 0 or if contract isn't initialized yet
-        claimBtn.disabled = false;
-        claimStatusNote.textContent = tokenBalance > 0 ? 'Tokens available in wallet.' : 'Ready to test claim transaction.';
-        
-      } catch (e) {
-        console.error("Claim check error:", e);
-        claimBalanceEl.textContent = '0 $AXN';
-        claimBtn.disabled = false; // Keep interactive so user never gets stuck with a dead button
-        claimStatusNote.textContent = 'Ready to test claim transaction.';
-      }
-
     } else {
       connectBtn.textContent = 'Connect Wallet';
       connectBtn.classList.remove('connected');
-      claimBalanceEl.textContent = '0 $AXN';
-      claimBtn.disabled = true;
-      claimStatusNote.textContent = 'Connect wallet above to check allocation.';
     }
   }
 
@@ -737,45 +672,6 @@
       }
     }
   }
-
-  document.getElementById('claimBtn').addEventListener('click', async () => {
-    const claimBtn = document.getElementById('claimBtn');
-    const originalText = claimBtn.textContent;
-
-    try {
-      if (!connectedAccount) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-
-      claimBtn.textContent = 'Switching Network...';
-      await ensureChain('0x38', CHAINS.bnbbsc.addParams);
-
-      claimBtn.textContent = 'Confirm Claim in Wallet...';
-      claimBtn.disabled = true;
-
-      const claimAmount = "1000"; 
-      const txData = buildErc20TransferData(connectedAccount, claimAmount, 18);
-
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [{
-          from: connectedAccount,
-          to: CONFIG.axonTokenAddress,
-          value: '0x0',
-          data: txData
-        }]
-      });
-
-      alert('Success! Claim Transaction Hash: ' + txHash);
-      updateWalletUI(connectedAccount);
-    } catch (err) {
-      alert('Claim Error: ' + (err.message || 'Unknown error occurred'));
-    } finally {
-      claimBtn.textContent = originalText;
-      claimBtn.disabled = false;
-    }
-  });
 
   document.getElementById('buyBtn').addEventListener('click', async () => {
     const amt = parseFloat(amountInput.value);
