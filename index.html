@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Brighter, glowing space theme */
     --bg:#12122b;
     --bg-panel:#1e1e42;
     --bg-panel-2:#28285c;
@@ -44,36 +43,36 @@
     mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black 60%, transparent 100%);
   }
 
-  /* Floating Logo Images */
+  /* Floating Logo Images Container & Styling */
   .floating-logos {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
     overflow: hidden;
   }
   .float-logo {
     position: absolute;
-    width: 90px;
-    height: 90px;
+    width: 85px;
+    height: 85px;
     object-fit: contain;
-    opacity: 0.8;
-    filter: drop-shadow(0 0 25px var(--signal-2));
+    opacity: 0.85;
+    filter: drop-shadow(0 0 20px rgba(95,251,224,0.6));
     animation: floatAnim 18s infinite ease-in-out alternate;
   }
-  .float-logo:nth-child(1) { top: 15%; left: 8%; width: 85px; height: 85px; animation-duration: 22s; animation-delay: 0s; }
-  .float-logo:nth-child(2) { top: 65%; left: 10%; width: 110px; height: 110px; animation-duration: 26s; animation-delay: -3s; }
-  .float-logo:nth-child(3) { top: 20%; right: 10%; width: 100px; height: 100px; animation-duration: 20s; animation-delay: -5s; }
-  .float-logo:nth-child(4) { top: 75%; right: 12%; width: 90px; height: 90px; animation-duration: 24s; animation-delay: -2s; }
-  .float-logo:nth-child(5) { top: 45%; left: 48%; width: 75px; height: 75px; animation-duration: 16s; animation-delay: -7s; opacity: 0.65; }
+  .float-logo:nth-child(1) { top: 18%; left: 8%; width: 75px; height: 75px; animation-duration: 20s; animation-delay: 0s; }
+  .float-logo:nth-child(2) { top: 58%; left: 6%; width: 95px; height: 95px; animation-duration: 25s; animation-delay: -3s; }
+  .float-logo:nth-child(3) { top: 22%; right: 8%; width: 85px; height: 85px; animation-duration: 22s; animation-delay: -5s; }
+  .float-logo:nth-child(4) { top: 70%; right: 10%; width: 80px; height: 80px; animation-duration: 24s; animation-delay: -2s; }
+  .float-logo:nth-child(5) { top: 46%; left: 52%; width: 70px; height: 70px; animation-duration: 17s; animation-delay: -7s; opacity: 0.7; }
 
   @keyframes floatAnim {
     0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
-    50% { transform: translateY(-40px) translateX(30px) rotate(180deg); }
-    100% { transform: translateY(35px) translateX(-25px) rotate(360deg); }
+    50% { transform: translateY(-35px) translateX(25px) rotate(180deg); }
+    100% { transform: translateY(30px) translateX(-20px) rotate(360deg); }
   }
 
-  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
 
   nav{
     display:flex;align-items:center;justify-content:space-between;
@@ -101,7 +100,7 @@
     box-shadow:0 0 25px rgba(95, 251, 224, 0.5);
   }
 
-  .hero{padding:96px 24px 64px;text-align:center;position:relative;z-index:1;}
+  .hero{padding:96px 24px 64px;text-align:center;position:relative;z-index:2;}
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     border:1px solid var(--line);background:var(--bg-panel);
@@ -151,7 +150,7 @@
   .stats{
     display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
     background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
-    max-width:960px;margin:0 auto 80px;position:relative;z-index:1;
+    max-width:960px;margin:0 auto 80px;position:relative;z-index:2;
     box-shadow:0 10px 35px rgba(0,0,0,0.5);
   }
   .stat{background:var(--bg-panel);padding:24px 12px;text-align:center;}
@@ -159,7 +158,7 @@
   .stat .lbl{font-size:11.5px;color:var(--text-dimmer);margin-top:6px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
   @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
 
-  .section{padding:64px 24px;position:relative;z-index:1;}
+  .section{padding:64px 24px;position:relative;z-index:2;}
   .section-head{text-align:center;max-width:520px;margin:0 auto 40px;}
   .section-head .kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal-2);margin-bottom:10px;font-weight:700;}
   .section-head h2{font-size:clamp(26px,4vw,36px);font-weight:700;}
@@ -292,13 +291,13 @@
 
 <div class="grid-bg"></div>
 
-<!-- Floating Token Logos using your exact attached logo -->
+<!-- Floating Real Logo Images -->
 <div class="floating-logos">
-  <img src="image_5.png" class="float-logo" alt="AXON Logo">
-  <img src="image_5.png" class="float-logo" alt="AXON Logo">
-  <img src="image_5.png" class="float-logo" alt="AXON Logo">
-  <img src="image_5.png" class="float-logo" alt="AXON Logo">
-  <img src="image_5.png" class="float-logo" alt="AXON Logo">
+  <img src="image_8.png" class="float-logo" alt="AXON Logo">
+  <img src="image_8.png" class="float-logo" alt="AXON Logo">
+  <img src="image_8.png" class="float-logo" alt="AXON Logo">
+  <img src="image_8.png" class="float-logo" alt="AXON Logo">
+  <img src="image_8.png" class="float-logo" alt="AXON Logo">
 </div>
 
 <!-- Wallet Selection Modal -->
@@ -315,7 +314,7 @@
 </div>
 
 <nav>
-  <div class="logo"><img src="image_5.png" alt="AXON"> AXON</div>
+  <div class="logo"><img src="image_8.png" alt="AXON"> AXON</div>
   <div class="nav-links">
     <a href="#buy">Presale</a>
     <a href="#stages">Stages</a>
@@ -432,7 +431,6 @@
     usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
   };
 
-  // Copy Contract Address functionality
   const copyBtn = document.getElementById('copyContractBtn');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
