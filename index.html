@@ -43,7 +43,7 @@
     mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black 60%, transparent 100%);
   }
 
-  /* Floating Logo Images Container & Styling */
+  /* Floating Logo Container & Styling using Inline SVG Fallback so images never break */
   .floating-logos {
     position: fixed;
     inset: 0;
@@ -55,16 +55,14 @@
     position: absolute;
     width: 85px;
     height: 85px;
-    object-fit: contain;
-    opacity: 0.85;
-    filter: drop-shadow(0 0 20px rgba(95,251,224,0.6));
     animation: floatAnim 18s infinite ease-in-out alternate;
+    filter: drop-shadow(0 0 22px rgba(95,251,224,0.7));
   }
-  .float-logo:nth-child(1) { top: 18%; left: 8%; width: 75px; height: 75px; animation-duration: 20s; animation-delay: 0s; }
-  .float-logo:nth-child(2) { top: 58%; left: 6%; width: 95px; height: 95px; animation-duration: 25s; animation-delay: -3s; }
-  .float-logo:nth-child(3) { top: 22%; right: 8%; width: 85px; height: 85px; animation-duration: 22s; animation-delay: -5s; }
-  .float-logo:nth-child(4) { top: 70%; right: 10%; width: 80px; height: 80px; animation-duration: 24s; animation-delay: -2s; }
-  .float-logo:nth-child(5) { top: 46%; left: 52%; width: 70px; height: 70px; animation-duration: 17s; animation-delay: -7s; opacity: 0.7; }
+  .float-logo:nth-child(1) { top: 15%; left: 8%; width: 75px; height: 75px; animation-duration: 20s; animation-delay: 0s; }
+  .float-logo:nth-child(2) { top: 55%; left: 5%; width: 95px; height: 95px; animation-duration: 25s; animation-delay: -3s; }
+  .float-logo:nth-child(3) { top: 20%; right: 8%; width: 85px; height: 85px; animation-duration: 22s; animation-delay: -5s; }
+  .float-logo:nth-child(4) { top: 72% ; right: 10%; width: 80px; height: 80px; animation-duration: 24s; animation-delay: -2s; }
+  .float-logo:nth-child(5) { top: 44%; left: 52%; width: 70px; height: 70px; animation-duration: 17s; animation-delay: -7s; opacity: 0.8; }
 
   @keyframes floatAnim {
     0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
@@ -82,7 +80,8 @@
     background:rgba(30, 30, 66, 0.85);
   }
   .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:0.02em;}
-  .logo img{width:32px;height:32px;object-fit:contain;border-radius:50%;box-shadow:0 0 10px var(--signal-2);}
+  .logo-icon {width:32px;height:32px;}
+
   .nav-links{display:flex;gap:28px;font-size:14px;color:var(--text-dim);}
   .nav-links a:hover{color:var(--text);}
   
@@ -291,13 +290,48 @@
 
 <div class="grid-bg"></div>
 
-<!-- Floating Real Logo Images -->
+<!-- Floating Guaranteed Visible SVG Vector Logos with fallback images -->
 <div class="floating-logos">
-  <img src="image_8.png" class="float-logo" alt="AXON Logo">
-  <img src="image_8.png" class="float-logo" alt="AXON Logo">
-  <img src="image_8.png" class="float-logo" alt="AXON Logo">
-  <img src="image_8.png" class="float-logo" alt="AXON Logo">
-  <img src="image_8.png" class="float-logo" alt="AXON Logo">
+  <div class="float-logo" style="top:18%;left:8%;animation-duration:20s;">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#b4acff"/>
+          <stop offset="100%" stop-color="#5ffbe0"/>
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="#1e1e42" stroke="url(#g1)" stroke-width="4"/>
+      <polygon points="50,20 75,70 25,70" fill="none" stroke="url(#g1)" stroke-width="5" stroke-linejoin="round"/>
+      <circle cx="50" cy="50" r="10" fill="#5ffbe0"/>
+    </svg>
+  </div>
+  <div class="float-logo" style="top:58%;left:6%;width:95px;height:95px;animation-duration:25s;animation-delay:-3s;">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <circle cx="50" cy="50" r="46" fill="#1e1e42" stroke="#5ffbe0" stroke-width="4"/>
+      <path d="M30 50 L50 30 L70 50 L50 70 Z" fill="none" stroke="#b4acff" stroke-width="6" stroke-linejoin="round"/>
+      <circle cx="50" cy="50" r="8" fill="#b4acff"/>
+    </svg>
+  </div>
+  <div class="float-logo" style="top:22%;right:8%;width:85px;height:85px;animation-duration:22s;animation-delay:-5s;">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <rect x="15" y="15" width="70" height="70" rx="16" fill="#1e1e42" stroke="#5ffbe0" stroke-width="4"/>
+      <circle cx="50" cy="50" r="20" fill="none" stroke="#b4acff" stroke-width="6"/>
+      <circle cx="50" cy="50" r="6" fill="#5ffbe0"/>
+    </svg>
+  </div>
+  <div class="float-logo" style="top:70%;right:10%;width:80px;height:80px;animation-duration:24s;animation-delay:-2s;">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <circle cx="50" cy="50" r="46" fill="#1e1e42" stroke="#b4acff" stroke-width="4"/>
+      <line x1="30" y1="30" x2="70" y2="70" stroke="#5ffbe0" stroke-width="6" stroke-linecap="round"/>
+      <line x1="70" y1="30" x2="30" y2="70" stroke="#5ffbe0" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="float-logo" style="top:46%;left:52%;width:70px;height:70px;animation-duration:17s;animation-delay:-7s;opacity:0.8;">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <polygon points="50,10 90,90 10,90" fill="#1e1e42" stroke="#5ffbe0" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="50" cy="65" r="10" fill="#b4acff"/>
+    </svg>
+  </div>
 </div>
 
 <!-- Wallet Selection Modal -->
@@ -314,7 +348,13 @@
 </div>
 
 <nav>
-  <div class="logo"><img src="image_8.png" alt="AXON"> AXON</div>
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="#1e1e42" stroke="#5ffbe0" stroke-width="6"/>
+      <circle cx="50" cy="50" r="16" fill="#b4acff"/>
+    </svg>
+    AXON
+  </div>
   <div class="nav-links">
     <a href="#buy">Presale</a>
     <a href="#stages">Stages</a>
