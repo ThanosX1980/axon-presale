@@ -43,6 +43,36 @@
     mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
   }
 
+  /* Floating Logos Background Animation */
+  .floating-logos {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .float-logo {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.15;
+    filter: drop-shadow(0 0 10px var(--signal-2));
+    animation: floatAnim 18s infinite ease-in-out alternate;
+  }
+  .float-logo:nth-child(1) { top: 15%; left: 8%; width: 50px; height: 50px; animation-duration: 22s; animation-delay: 0s; }
+  .float-logo:nth-child(2) { top: 65%; left: 12%; width: 75px; height: 75px; animation-duration: 26s; animation-delay: -3s; }
+  .float-logo:nth-child(3) { top: 25%; right: 10%; width: 65px; height: 65px; animation-duration: 20s; animation-delay: -5s; }
+  .float-logo:nth-child(4) { top: 75%; right: 15%; width: 55px; height: 55px; animation-duration: 24s; animation-delay: -2s; }
+  .float-logo:nth-child(5) { top: 45%; left: 48%; width: 45px; height: 45px; animation-duration: 16s; animation-delay: -7s; opacity: 0.1; }
+
+  @keyframes floatAnim {
+    0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    50% { transform: translateY(-35px) translateX(25px) rotate(180deg); }
+    100% { transform: translateY(30px) translateX(-20px) rotate(360deg); }
+  }
+
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
 
   nav{
@@ -215,4 +245,442 @@
   .stage-price {font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;margin-bottom:8px;}
   .stage-status {font-size:10px;padding:3px 8px;border-radius:99px;font-weight:600;text-transform:uppercase;}
   .stage-card.active .stage-status {background:rgba(94, 230, 200, 0.2);color:var(--signal-2);}
-  .stage-card.completed .stage-status {background:rgba(139, 127, 255, 0.15);
+  .stage-card.completed .stage-status {background:rgba(139, 127, 255, 0.15);color:var(--signal);}
+  .stage-card.upcoming .stage-status {background:var(--bg-panel-2);color:var(--text-dimmer);}
+
+  @media(max-width:900px){.stages-grid{grid-template-columns:repeat(2,1fr);}}
+
+  /* Wallet Modal Overlay */
+  .wallet-modal-overlay {
+    position:fixed;inset:0;background:rgba(10,10,18,0.85);backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;z-index:99999;
+  }
+  .wallet-modal-overlay.active {display:flex;}
+  .wallet-modal {
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
+    width:90%;max-width:360px;padding:24px;text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.6);
+  }
+  .wallet-modal h3 {font-size:18px;margin-bottom:16px;}
+  .wallet-option-list {display:flex;flex-direction:column;gap:10px;}
+  .wallet-option {
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;font-weight:600;font-size:14px;color:var(--text);cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .wallet-option:hover {border-color:var(--signal);color:var(--signal-2);}
+  .wallet-modal-close {
+    background:transparent;border:none;color:var(--text-dim);margin-top:16px;cursor:pointer;font-size:13px;padding:8px;
+  }
+
+  footer{border-top:1px solid var(--line);padding:36px 24px;text-align:center;color:var(--text-dimmer);font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- Floating Token Logos -->
+<div class="floating-logos">
+  <img src="image.png" class="float-logo" alt="AXON Token">
+  <img src="image.png" class="float-logo" alt="AXON Token">
+  <img src="image.png" class="float-logo" alt="AXON Token">
+  <img src="image.png" class="float-logo" alt="AXON Token">
+  <img src="image.png" class="float-logo" alt="AXON Token">
+</div>
+
+<!-- Wallet Selection Modal -->
+<div class="wallet-modal-overlay" id="walletModal">
+  <div class="wallet-modal" id="walletModalBox">
+    <h3>Select Wallet</h3>
+    <div class="wallet-option-list">
+      <div class="wallet-option" data-wallet="metamask"><span>MetaMask</span> →</div>
+      <div class="wallet-option" data-wallet="trust"><span>Trust Wallet</span> →</div>
+      <div class="wallet-option" data-wallet="coinbase"><span>Coinbase Wallet</span> →</div>
+    </div>
+    <button class="wallet-modal-close" id="closeModalBtn" type="button">Cancel</button>
+  </div>
+</div>
+
+<nav>
+  <div class="logo"><span class="node"></span>AXON</div>
+  <div class="nav-links">
+    <a href="#buy">Presale</a>
+    <a href="#stages">Stages</a>
+  </div>
+  <div class="nav-actions">
+    <a href="KYC_Verification_Report.pdf" class="doc-btn" download>KYC PDF</a>
+    <a href="AXON_Audit_Report.pdf" class="doc-btn" download>Audit PDF</a>
+    <a href="#buy" class="nav-cta">Buy $AXN</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span>PRESALE LIVE — Softcap: $150K | Hardcap: $1.5M</div>
+    <h1 class="hero-title">Signal is the <span class="grad">network.</span></h1>
+    <p class="hero-sub">AXON ($AXN) presale is now open across 10 dynamic pricing rounds. Pay with ETH, BNB, USDT, MATIC, or USDC.</p>
+  </div>
+</section>
+
+<!-- Contract Address Bar -->
+<div class="wrap">
+  <div class="contract-bar-wrap">
+    <div class="contract-bar">
+      <div class="contract-info">
+        <span class="contract-label">Contract</span>
+        <span class="contract-address" id="contractAddressText">0xC7C101be3e01258A4e6111273a412656E36Cd1a3</span>
+      </div>
+      <button class="copy-btn" id="copyContractBtn" type="button">Copy Address</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><div class="val" id="statRaised">$109,224</div><div class="lbl">Raised</div></div>
+    <div class="stat"><div class="val" id="statRound">Round 1</div><div class="lbl">Current Stage</div></div>
+    <div class="stat"><div class="val" id="statPrice">$0.001875</div><div class="lbl">Current Price</div></div>
+    <div class="stat"><div class="val" id="statHolders">248</div><div class="lbl">Participants</div></div>
+  </div>
+</div>
+
+<section class="section" id="buy">
+  <div class="section-head">
+    <div class="kicker">Presale</div>
+    <h2>Buy $AXN now</h2>
+    <p>Prices increase slightly by $0.0005 each round across 10 stages up to the $1.5M hardcap.</p>
+  </div>
+
+  <div class="buy-card">
+    <div class="wallet-connect-row">
+      <button class="wallet-btn" id="connectWalletBtn" type="button"><span class="wdot"></span>Connect Wallet</button>
+    </div>
+
+    <div class="presale-bar-wrap">
+      <div class="presale-bar-top">
+        <span id="roundIndicatorLabel">Round 1 (Target: $150K Softcap)</span>
+        <span class="raised mono" id="barRaisedLabel">$109,224</span>
+      </div>
+      <div class="presale-bar"><div class="presale-bar-fill" id="presaleFill" style="--fill:0%"></div></div>
+      <div class="price-row"><span>Hardcap: $1,500,000</span><span class="mono" id="barSoldLabel">58,252,800 $AXN</span></div>
+    </div>
+
+    <div class="field-label">Pay with</div>
+    <div class="pay-select" id="paySelect">
+      <div class="pay-opt active" data-ticker="eth">ETH</div>
+      <div class="pay-opt" data-ticker="bnbbsc">BNB</div>
+      <div class="pay-opt" data-ticker="usdterc20">USDT</div>
+      <div class="pay-opt" data-ticker="maticmainnet">MATIC</div>
+      <div class="pay-opt" data-ticker="usdc">USDC</div>
+    </div>
+
+    <div class="field-label">Amount</div>
+    <div class="amount-input">
+      <input type="number" id="payAmount" placeholder="0.00" min="0" step="any" value="1">
+      <span class="cur" id="payCurLabel">ETH</span>
+    </div>
+
+    <div class="receive-box">
+      <span class="lbl">You'll receive at presale end</span>
+      <span class="amt" id="receiveAmt">0 $AXN</span>
+    </div>
+
+    <button class="buy-btn" id="buyBtn" type="button">Buy $AXN</button>
+  </div>
+
+  <div class="section-head" id="stages" style="margin-top: 40px;">
+    <div class="kicker">Structure</div>
+    <h2>10-Stage Presale Schedule</h2>
+  </div>
+  <div class="stages-grid" id="stagesGrid"></div>
+</section>
+
+<footer>
+  <div class="disclaimer">$AXN is a presale token. Cryptocurrency investments carry risk.</div>
+  <div>© 2026 AXON. All rights reserved.</div>
+</footer>
+
+<script>
+(function() {
+  const CONFIG = {
+    basePriceUsd: 0.001875,
+    raisedUsd: 109224,          
+    tokensSold: 58252800,          
+    hardCapUsd: 1500000,
+    rates: { eth: 3400, bnbbsc: 560, usdterc20: 1, maticmainnet: 0.55, usdc: 1 },
+    treasuryAddress: "0xC7C101be3e01258A4e6111273a412656E36Cd1a3"
+  };
+
+  const CHAINS = {
+    eth:          { hex: '0x1', decimals: 18, native: true },
+    bnbbsc:       { hex: '0x38', decimals: 18, native: true, addParams: { chainName: 'BNB Smart Chain', nativeCurrency: {name:'BNB', symbol:'BNB', decimals:18}, rpcUrls: ['https://bsc-dataseed.binance.org/'], blockExplorerUrls: ['https://bscscan.com'] } },
+    maticmainnet: { hex: '0x89', decimals: 18, native: true, addParams: { chainName: 'Polygon Mainnet', nativeCurrency: {name:'MATIC', symbol:'MATIC', decimals:18}, rpcUrls: ['https://polygon-rpc.com/'], blockExplorerUrls: ['https://polygonscan.com'] } },
+    usdterc20:    { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
+    usdc:         { hex: '0x1', decimals: 6, native: false, tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }
+  };
+
+  // Copy Contract Address functionality
+  const copyBtn = document.getElementById('copyContractBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(CONFIG.treasuryAddress).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy Address';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy contract address: ', err);
+      });
+    });
+  }
+
+  function getCurrentRoundAndPrice(raised) {
+    const roundStep = CONFIG.hardCapUsd / 10;
+    let currentRound = Math.floor(raised / roundStep) + 1;
+    if (currentRound > 10) currentRound = 10;
+    if (currentRound < 1) currentRound = 1;
+    const currentPrice = CONFIG.basePriceUsd + ((currentRound - 1) * 0.0005);
+    return { round: currentRound, price: currentPrice };
+  }
+
+  function renderStagesGrid(currentRound) {
+    const stagesGrid = document.getElementById('stagesGrid');
+    if (!stagesGrid) return;
+    stagesGrid.innerHTML = '';
+    for (let r = 1; r <= 10; r++) {
+      const price = (CONFIG.basePriceUsd + ((r - 1) * 0.0005)).toFixed(6);
+      const card = document.createElement('div');
+      let statusClass = r < currentRound ? 'completed' : (r === currentRound ? 'active' : 'upcoming');
+      let statusText = r < currentRound ? 'Completed' : (r === currentRound ? 'Live Now' : 'Upcoming');
+      card.className = `stage-card ${statusClass}`;
+      card.innerHTML = `<div class="stage-num">Stage ${r}</div><div class="stage-price">$${price}</div><div class="stage-status">${statusText}</div>`;
+      stagesGrid.appendChild(card);
+    }
+  }
+
+  function updateDisplayStats() {
+    const fill = Math.min(100, (CONFIG.raisedUsd / CONFIG.hardCapUsd) * 100);
+    const { round, price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
+    const fillEl = document.getElementById('presaleFill');
+    if (fillEl) fillEl.style.setProperty('--fill', fill.toFixed(1) + '%');
+    
+    const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+    setTxt('barRaisedLabel', '$' + CONFIG.raisedUsd.toLocaleString());
+    setTxt('barSoldLabel', CONFIG.tokensSold.toLocaleString() + ' $AXN');
+    setTxt('statRaised', '$' + CONFIG.raisedUsd.toLocaleString());
+    setTxt('statRound', 'Round ' + round);
+    setTxt('statPrice', '$' + price.toFixed(6));
+    setTxt('roundIndicatorLabel', `Round ${round} of 10`);
+    renderStagesGrid(round);
+    updateReceiveAmount();
+  }
+
+  let selectedTicker = 'eth'; 
+  const payOpts = document.querySelectorAll('.pay-opt');
+  payOpts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      payOpts.forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      selectedTicker = opt.dataset.ticker;
+      const curLabel = document.getElementById('payCurLabel');
+      if (curLabel) curLabel.textContent = opt.textContent;
+      updateReceiveAmount();
+    });
+  });
+
+  const amountInput = document.getElementById('payAmount');
+  const receiveEl = document.getElementById('receiveAmt');
+  
+  function updateReceiveAmount(){
+    if(!amountInput || !receiveEl) return;
+    const amt = parseFloat(amountInput.value) || 0;
+    const usdValue = amt * (CONFIG.rates[selectedTicker] || 0);
+    const { price } = getCurrentRoundAndPrice(CONFIG.raisedUsd);
+    const tokens = usdValue / price;
+    receiveEl.textContent = tokens.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $AXN';
+  }
+  if (amountInput) amountInput.addEventListener('input', updateReceiveAmount);
+
+  let connectedAccount = null;
+  const connectBtn = document.getElementById('connectWalletBtn');
+  const walletModal = document.getElementById('walletModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  function updateWalletUI(account) {
+    connectedAccount = account;
+    if (!connectBtn) return;
+    if (account) {
+      connectBtn.textContent = account.slice(0,6) + '…' + account.slice(-4);
+      connectBtn.classList.add('connected');
+      if (!connectBtn.querySelector('.wdot')) {
+        connectBtn.prepend(Object.assign(document.createElement('span'), {className:'wdot'}));
+      }
+    } else {
+      connectBtn.textContent = 'Connect Wallet';
+      connectBtn.classList.remove('connected');
+    }
+  }
+
+  if (connectBtn && walletModal) {
+    connectBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      walletModal.classList.add('active');
+    });
+  }
+
+  if (closeModalBtn && walletModal) {
+    closeModalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      walletModal.classList.remove('active');
+    });
+  }
+
+  if (walletModal) {
+    walletModal.addEventListener('click', (e) => {
+      if (e.target === walletModal) {
+        walletModal.classList.remove('active');
+      }
+    });
+  }
+
+  document.querySelectorAll('.wallet-option').forEach(option => {
+    option.addEventListener('click', async () => {
+      const walletType = option.dataset.wallet;
+      if (walletModal) walletModal.classList.remove('active');
+      await connectSpecificWallet(walletType);
+    });
+  });
+
+  async function connectSpecificWallet(walletType) {
+    let provider = window.ethereum;
+    if (window.ethereum?.providers) {
+      if (walletType === 'coinbase') {
+        provider = window.ethereum.providers.find(p => p.isCoinbaseWallet) || window.ethereum;
+      } else if (walletType === 'metamask') {
+        provider = window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum;
+      }
+    }
+
+    if (!provider) {
+      const currentUrl = encodeURIComponent(window.location.href);
+      const cleanHost = window.location.host + window.location.pathname;
+      if (walletType === 'trust') {
+        window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=${currentUrl}`;
+        return;
+      } else if (walletType === 'coinbase') {
+        window.location.href = `https://go.cb-w.com/dapp?url=${currentUrl}`;
+        return;
+      } else if (walletType === 'metamask') {
+        window.location.href = `https://metamask.app.link/dapp/${cleanHost}`;
+        return;
+      } else {
+        alert("No Web3 wallet provider detected. Please open this page inside a Web3 app browser.");
+        return;
+      }
+    }
+
+    try {
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      if (accounts && accounts.length > 0) {
+        updateWalletUI(accounts[0]);
+        window.activeProvider = provider;
+        return accounts[0];
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Wallet connection was rejected or failed.');
+    }
+    return null;
+  }
+
+  function getActiveProvider() {
+    return window.activeProvider || window.ethereum || window.web3?.currentProvider;
+  }
+
+  function toHexWei(amountStr, decimals) {
+    let [whole, frac = ''] = String(amountStr).split('.');
+    frac = (frac + '0'.repeat(decimals)).slice(0, decimals);
+    return '0x' + BigInt((whole + frac).replace(/^0+(?=\d)/, '') || '0').toString(16);
+  }
+
+  function buildErc20TransferData(toAddress, amountStr, decimals) {
+    const selector = 'a9059cbb';
+    const addrPadded = toAddress.replace('0x','').toLowerCase().padStart(64, '0');
+    const amountHex = BigInt(toHexWei(amountStr, decimals)).toString(16).padStart(64, '0');
+    return '0x' + selector + addrPadded + amountHex;
+  }
+
+  async function ensureChain(hexChainId, addParams) {
+    const prov = getActiveProvider();
+    const currentChain = await prov.request({ method: 'eth_chainId' });
+    if (currentChain === hexChainId) return;
+    try {
+      await prov.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] });
+    } catch (err) {
+      if (err.code === 4902 && addParams) {
+        await prov.request({ method: 'wallet_addEthereumChain', params: [{ chainId: hexChainId, ...addParams }] });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  const buyBtn = document.getElementById('buyBtn');
+  if (buyBtn) {
+    buyBtn.addEventListener('click', async () => {
+      const amt = parseFloat(amountInput ? amountInput.value : 0);
+      if (!amt || amt <= 0) { alert('Please enter a valid amount.'); return; }
+
+      const originalText = buyBtn.textContent;
+      try {
+        let account = connectedAccount;
+        if (!account) {
+          if (walletModal) walletModal.classList.add('active');
+          return;
+        }
+
+        buyBtn.textContent = 'Preparing Transaction...';
+        buyBtn.disabled = true;
+
+        const chainInfo = CHAINS[selectedTicker];
+        if (!chainInfo) throw new Error('Unsupported network token.');
+
+        await ensureChain(chainInfo.hex, chainInfo.addParams);
+
+        let txParams = chainInfo.native ? {
+          from: account,
+          to: CONFIG.treasuryAddress,
+          value: toHexWei(String(amt), chainInfo.decimals)
+        } : {
+          from: account,
+          to: chainInfo.tokenAddress,
+          value: '0x0',
+          data: buildErc20TransferData(CONFIG.treasuryAddress, String(amt), chainInfo.decimals)
+        };
+
+        buyBtn.textContent = 'Confirm in Wallet...';
+        const prov = getActiveProvider();
+        const txHash = await prov.request({
+          method: 'eth_sendTransaction',
+          params: [txParams]
+        });
+
+        alert('Success! Transaction Hash: ' + txHash);
+      } catch (err) {
+        console.error(err);
+        alert('Transaction failed: ' + (err.message || 'Unknown error'));
+      } finally {
+        buyBtn.textContent = originalText;
+        buyBtn.disabled = false;
+      }
+    });
+  }
+
+  updateDisplayStats();
+})();
+</script>
+</body>
+</html>
